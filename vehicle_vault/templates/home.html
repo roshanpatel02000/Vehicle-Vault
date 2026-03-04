@@ -1,4 +1,4 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Vehicle Vault — Find Your Perfect Car{% endblock %}
@@ -37,6 +37,53 @@
     }
     .ts-dropdown .option { padding: 10px 18px; }
     .ts-dropdown .active { background-color: #fff7f3; color: #ff5a00; }
+
+    /* ── Featured Vehicles — Light Cards (all rows) ── */
+    .vv-listings { background: #f8f9fb !important; }
+
+    .vv-listings-grid { align-items: stretch; }
+
+    .vv-car-card {
+        background: #ffffff !important;
+        border: 1px solid #e9eaec !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
+    .vv-car-card:hover {
+        border-color: rgba(255,90,0,0.3) !important;
+        box-shadow: 0 20px 56px rgba(0,0,0,0.10) !important;
+    }
+    .vv-car-body {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 1 !important;
+    }
+    .vv-car-tag  { color: #9ca3af !important; }
+    .vv-car-name {
+        color: #111827 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        min-height: 2.4em !important;
+    }
+    .vv-car-specs { color: #9ca3af !important; margin-bottom: 20px; }
+    .vv-dot       { color: #d1d5db !important; }
+    .vv-car-footer {
+        border-top: 1px solid #f3f4f6 !important;
+        padding-top: 18px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        margin-top: auto !important;
+    }
+    .vv-car-price-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .vv-car-price { color: #111827 !important; font-size: 22px !important; }
+    .vv-car-orig-price { color: #9ca3af !important; font-size: 13px !important; text-decoration: line-through !important; }
+    .vv-car-btn   { color: #ff5a00 !important; align-self: flex-start !important; }
+    .vv-section-title { color: #111827 !important; }
 </style>
 {% endblock %}
 
@@ -113,10 +160,10 @@
                         <span>{{ vehicle.transmission }}</span>
                     </div>
                     <div class="vv-car-footer">
-                        <div>
+                        <div class="vv-car-price-row">
                             {% if vehicle.offer_price %}
                             <span class="vv-car-price">₹{{ vehicle.offer_price|floatformat:0 }}</span>
-                            <span style="font-size:12px;color:#9ca3af;text-decoration:line-through;margin-left:6px;">₹{{ vehicle.price|floatformat:0 }}</span>
+                            <span class="vv-car-orig-price">₹{{ vehicle.price|floatformat:0 }}</span>
                             {% else %}
                             <span class="vv-car-price">₹{{ vehicle.price|floatformat:0 }}</span>
                             {% endif %}

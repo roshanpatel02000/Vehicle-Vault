@@ -15,4 +15,6 @@ urlpatterns = [
     path("user-dashboard/", views.UserDashboardView, name="user_dashboard"),
     path("compare/", views.comparisonPageView, name="compare_vehicles"),
     path("compare/api/", views.compareVehiclesView, name="compare_vehicles_api"),
+    path("search/", views.searchVehiclesView, name="search_vehicles"),
+    path("vehicle/<int:vehicle_id>/detail/", views.vehicleDetailView, name="vehicle_detail"),
 ]

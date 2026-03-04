@@ -16,6 +16,69 @@
             <li><a href="#" class="nav-link">About</a></li>
         </ul>
 
+        <!-- Search Bar -->
+        <div class="nav-search-wrap" id="nav-search-wrap">
+            <div class="nav-search-box">
+                <svg class="nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input
+                    type="text"
+                    id="nav-search-input"
+                    class="nav-search-input"
+                    placeholder="Search brand, model, fuel type…"
+                    autocomplete="off"
+                    aria-label="Search vehicles"
+                >
+                <button class="nav-search-clear" id="nav-search-clear" aria-label="Clear search">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            <!-- Search Popup -->
+            <div class="nav-search-popup" id="nav-search-popup">
+                <!-- Filter Chips -->
+                <div class="nsp-filters">
+                    <span class="nsp-filter-label">Fuel:</span>
+                    <button class="nsp-chip" data-fuel="Petrol">Petrol</button>
+                    <button class="nsp-chip" data-fuel="Diesel">Diesel</button>
+                    <button class="nsp-chip" data-fuel="Electric">Electric</button>
+                    <button class="nsp-chip" data-fuel="Hybrid">Hybrid</button>
+                    <button class="nsp-chip" data-fuel="CNG">CNG</button>
+                </div>
+
+                <!-- Price Range -->
+                <div class="nsp-price-row">
+                    <span class="nsp-filter-label">Price (₹L):</span>
+                    <input type="number" id="nsp-min-price" class="nsp-price-input" placeholder="Min L" min="0" step="0.5">
+                    <span class="nsp-price-sep">—</span>
+                    <input type="number" id="nsp-max-price" class="nsp-price-input" placeholder="Max L" min="0" step="0.5">
+                </div>
+
+                <div class="nsp-divider"></div>
+
+                <!-- Loading -->
+                <div class="nsp-loading" id="nsp-loading">
+                    <div class="nsp-spinner"></div>
+                    <span>Searching…</span>
+                </div>
+
+                <!-- Results -->
+                <div class="nsp-results" id="nsp-results"></div>
+
+                <!-- Empty State -->
+                <div class="nsp-empty" id="nsp-empty">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <p>No vehicles found</p>
+                    <small>Try a different name or adjust filters</small>
+                </div>
+
+                <!-- Hint (initial state) -->
+                <div class="nsp-hint" id="nsp-hint">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Type to search all vehicles by brand, model, or fuel type</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Right: Auth Actions -->
         <div class="nav-actions">
             {% if user.is_authenticated %}
@@ -61,6 +124,11 @@
 
     <!-- Mobile Menu -->
     <div class="nav-mobile-menu" id="nav-mobile-menu">
+        <!-- Mobile Search -->
+        <div class="nav-mobile-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="nav-mobile-search-input" class="nav-mobile-search-input" placeholder="Search vehicles…" autocomplete="off">
+        </div>
         <a href="/" class="nav-mobile-link">Home</a>
         <a href="#" class="nav-mobile-link">Vehicles</a>
         <a href="#" class="nav-mobile-link">Services</a>
@@ -77,18 +145,1004 @@
         <a href="{% url 'login' %}" class="nav-mobile-link">Login</a>
         <a href="{% url 'signup' %}" class="nav-mobile-link nav-mobile-cta">Get Started</a>
         {% endif %}
+        <!-- Mobile Results -->
+        <div id="nsp-mobile-results" class="nsp-mobile-results"></div>
     </div>
 </nav>
 
+<!-- ═══════════════════════════════════════════════════════
+     Vehicle Detail Modal (outside <nav> so z-index is fine)
+═══════════════════════════════════════════════════════ -->
+<div id="vd-overlay" class="vd-overlay" role="dialog" aria-modal="true" aria-label="Vehicle Detail">
+    <div class="vd-modal">
+        <!-- Close button -->
+        <button class="vd-close" id="vd-close" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        <!-- Loading state -->
+        <div class="vd-loading" id="vd-modal-loading">
+            <div class="vd-spinner"></div>
+            <p>Loading vehicle details…</p>
+        </div>
+
+        <!-- Content (filled by JS) -->
+        <div class="vd-content" id="vd-modal-content" style="display:none;">
+            <!-- Hero image area -->
+            <div class="vd-hero" id="vd-hero">
+                <img id="vd-img" src="" alt="" class="vd-hero-img">
+                <div class="vd-hero-overlay"></div>
+                <div class="vd-hero-badges" id="vd-hero-badges"></div>
+            </div>
+
+            <!-- Body -->
+            <div class="vd-body">
+                <!-- Title row -->
+                <div class="vd-title-row">
+                    <div>
+                        <h2 class="vd-name" id="vd-name"></h2>
+                        <p class="vd-variant" id="vd-variant"></p>
+                    </div>
+                    <div class="vd-price-block" id="vd-price-block"></div>
+                </div>
+
+                <!-- Description -->
+                <p class="vd-description" id="vd-description"></p>
+
+                <!-- Specs grid -->
+                <div class="vd-specs-title">Specifications</div>
+                <div class="vd-specs" id="vd-specs"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ────────────────────────────────────────────────
+   Navbar Search Bar
+──────────────────────────────────────────────── */
+.nav-search-wrap {
+    position: relative;
+    flex: 1 1 0;
+    max-width: 440px;
+    min-width: 160px;
+    margin: 0 auto;
+}
+
+.nav-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    padding: 7px 14px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    cursor: text;
+}
+.nav-search-box:focus-within {
+    border-color: rgba(98, 54, 255, 0.6);
+    background: rgba(98, 54, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(98, 54, 255, 0.12);
+}
+
+.nav-search-icon {
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+.nav-search-box:focus-within .nav-search-icon {
+    color: #6236ff;
+}
+
+.nav-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 0.82rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-width: 0;
+}
+.nav-search-input::placeholder {
+    color: rgba(255,255,255,0.35);
+}
+
+.nav-search-clear {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    padding: 2px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: color 0.2s, background 0.2s;
+    flex-shrink: 0;
+}
+.nav-search-clear:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+.nav-search-clear.visible {
+    display: flex;
+}
+
+/* ────────────────────────────────────────────────
+   Search Popup
+──────────────────────────────────────────────── */
+.nav-search-popup {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    background: #16161e;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(98,54,255,0.08);
+    padding: 16px;
+    display: none;
+    z-index: 9999;
+    animation: nsp-fade-in 0.18s ease;
+}
+.nav-search-popup.active {
+    display: block;
+}
+@keyframes nsp-fade-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Filter chips */
+.nsp-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.nsp-filter-label {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.nsp-chip {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    color: rgba(255,255,255,0.65);
+    padding: 4px 11px;
+    font-size: 0.75rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.nsp-chip:hover {
+    border-color: rgba(98,54,255,0.5);
+    color: #a585ff;
+    background: rgba(98,54,255,0.1);
+}
+.nsp-chip.active {
+    background: #6236ff;
+    border-color: #6236ff;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(98,54,255,0.35);
+}
+
+/* Price range */
+.nsp-price-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.nsp-price-input {
+    width: 90px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.78rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 6px 10px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.nsp-price-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.nsp-price-input::placeholder { color: rgba(255,255,255,0.3); }
+.nsp-price-input:focus { border-color: rgba(98,54,255,0.5); }
+.nsp-price-sep {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+}
+
+.nsp-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 2px 0 12px;
+}
+
+/* Loading */
+.nsp-loading {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 0;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+}
+.nsp-loading.active { display: flex; }
+.nsp-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(98,54,255,0.2);
+    border-top-color: #6236ff;
+    border-radius: 50%;
+    animation: nsp-spin 0.7s linear infinite;
+}
+@keyframes nsp-spin { to { transform: rotate(360deg); } }
+
+/* Empty */
+.nsp-empty {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 20px 0;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+}
+.nsp-empty.active { display: flex; }
+.nsp-empty p { margin: 0; font-size: 0.9rem; font-weight: 500; color: rgba(255,255,255,0.5); }
+.nsp-empty small { font-size: 0.78rem; }
+
+/* Hint */
+.nsp-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 4px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.82rem;
+}
+.nsp-hint svg { flex-shrink: 0; }
+
+/* Result cards */
+.nsp-results {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(98,54,255,0.3) transparent;
+}
+.nsp-results::-webkit-scrollbar { width: 4px; }
+.nsp-results::-webkit-scrollbar-thumb { background: rgba(98,54,255,0.4); border-radius: 2px; }
+
+.nsp-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.18s, border-color 0.18s, transform 0.15s;
+    color: inherit;
+}
+.nsp-card:hover {
+    background: rgba(98,54,255,0.12);
+    border-color: rgba(98,54,255,0.25);
+    transform: translateX(3px);
+}
+
+.nsp-card-img {
+    width: 52px;
+    height: 38px;
+    border-radius: 7px;
+    object-fit: cover;
+    background: rgba(255,255,255,0.06);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.nsp-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.nsp-card-img-placeholder {
+    width: 52px; height: 38px;
+    border-radius: 7px;
+    background: rgba(98,54,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+}
+.nsp-card-img-placeholder::after {
+    content: '';
+    display: block;
+    width: 22px; height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236236ff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1' y='3' width='22' height='16' rx='3'/%3E%3Cpath d='M1 10h22'/%3E%3Ccircle cx='6' cy='17' r='2'/%3E%3Ccircle cx='18' cy='17' r='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: 0.7;
+}
+
+.nsp-card-info {
+    flex: 1;
+    min-width: 0;
+}
+.nsp-card-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 2px;
+}
+.nsp-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.45);
+}
+.nsp-fuel-badge {
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.nsp-fuel-petrol   { background: rgba(255,90,0,0.18);  color: #ff8040; }
+.nsp-fuel-diesel   { background: rgba(255,193,7,0.15); color: #ffc107; }
+.nsp-fuel-electric { background: rgba(0,230,118,0.15); color: #00e676; }
+.nsp-fuel-hybrid   { background: rgba(0,188,212,0.15); color: #00bcd4; }
+.nsp-fuel-cng      { background: rgba(156,39,176,0.15);color: #ba68c8; }
+
+.nsp-card-price {
+    text-align: right;
+    flex-shrink: 0;
+}
+.nsp-card-price .price-main {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+}
+.nsp-card-price .price-offer {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4caf50;
+}
+.nsp-card-price .price-orig {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.35);
+    text-decoration: line-through;
+}
+
+.nsp-featured-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #ff5a00;
+    background: rgba(255,90,0,0.12);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+/* Mobile search */
+.nav-mobile-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    color: rgba(255,255,255,0.4);
+}
+.nav-mobile-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 0.85rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.nav-mobile-search-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.nsp-mobile-results {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+.nsp-mobile-results .nsp-card {
+    padding: 10px;
+}
+
+/* Arrow on search card */
+.nsp-card-arrow {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    transition: color 0.18s, transform 0.18s;
+    margin-left: 4px;
+}
+.nsp-card:hover .nsp-card-arrow {
+    color: #6236ff;
+    transform: translateX(3px);
+}
+
+/* ────────────────────────────────────────────────
+   Vehicle Detail Modal
+──────────────────────────────────────────────── */
+.vd-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+.vd-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.vd-modal {
+    background: #13131a;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(98,54,255,0.1);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(98,54,255,0.3) transparent;
+}
+.vd-overlay.active .vd-modal {
+    transform: translateY(0) scale(1);
+}
+.vd-modal::-webkit-scrollbar { width: 5px; }
+.vd-modal::-webkit-scrollbar-thumb { background: rgba(98,54,255,0.4); border-radius: 3px; }
+
+/* Close button */
+.vd-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 10;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    transition: background 0.18s, color 0.18s, transform 0.18s;
+}
+.vd-close:hover {
+    background: rgba(234,57,67,0.15);
+    color: #ea3943;
+    transform: rotate(90deg);
+    border-color: rgba(234,57,67,0.3);
+}
+
+/* Loading */
+.vd-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 60px 20px;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.9rem;
+}
+.vd-spinner {
+    width: 32px; height: 32px;
+    border: 3px solid rgba(98,54,255,0.2);
+    border-top-color: #6236ff;
+    border-radius: 50%;
+    animation: nsp-spin 0.75s linear infinite;
+}
+
+/* Hero */
+.vd-hero {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    background: #0d0d12;
+    flex-shrink: 0;
+}
+.vd-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.vd-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(19,19,26,0.95) 100%);
+}
+.vd-hero-badges {
+    position: absolute;
+    bottom: 14px;
+    left: 16px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.vd-badge {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+.vd-badge-featured {
+    background: rgba(255,90,0,0.2);
+    color: #ff8040;
+    border: 1px solid rgba(255,90,0,0.3);
+}
+.vd-badge-body {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Body */
+.vd-body {
+    padding: 20px 22px 24px;
+}
+
+/* Title row */
+.vd-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.vd-name {
+    font-size: 1.45rem;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+}
+.vd-variant {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    margin: 4px 0 0;
+    font-weight: 500;
+}
+
+/* Price block */
+.vd-price-block {
+    text-align: right;
+    flex-shrink: 0;
+}
+.vd-price-offer {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #4caf50;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1;
+}
+.vd-price-main {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1;
+}
+.vd-price-orig {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.35);
+    text-decoration: line-through;
+    margin-top: 2px;
+}
+.vd-discount {
+    display: inline-block;
+    background: rgba(76,175,80,0.15);
+    color: #4caf50;
+    border: 1px solid rgba(76,175,80,0.3);
+    border-radius: 50px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+/* Description */
+.vd-description {
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.55);
+    margin: 0 0 18px;
+    border-left: 2px solid rgba(98,54,255,0.4);
+    padding-left: 12px;
+}
+
+/* Specs */
+.vd-specs-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 12px;
+}
+.vd-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.vd-spec-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: background 0.18s, border-color 0.18s;
+}
+.vd-spec-item:hover {
+    background: rgba(98,54,255,0.08);
+    border-color: rgba(98,54,255,0.2);
+}
+.vd-spec-icon {
+    line-height: 1;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(98,54,255,0.7);
+}
+.vd-spec-label {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+.vd-spec-value {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+@media (max-width: 520px) {
+    .vd-specs { grid-template-columns: 1fr; }
+    .vd-hero  { height: 180px; }
+    .vd-name  { font-size: 1.15rem; }
+    .vd-price-offer, .vd-price-main { font-size: 1.2rem; }
+}
+</style>
+
 <script>
-    // Transparent → solid navbar on scroll
+(function() {
+    const searchInput   = document.getElementById('nav-search-input');
+    const clearBtn      = document.getElementById('nav-search-clear');
+    const popup         = document.getElementById('nav-search-popup');
+    const loading       = document.getElementById('nsp-loading');
+    const results       = document.getElementById('nsp-results');
+    const empty         = document.getElementById('nsp-empty');
+    const hint          = document.getElementById('nsp-hint');
+    const chips         = document.querySelectorAll('.nsp-chip');
+    const minPriceInput = document.getElementById('nsp-min-price');
+    const maxPriceInput = document.getElementById('nsp-max-price');
+    const mobileInput   = document.getElementById('nav-mobile-search-input');
+    const mobileResults = document.getElementById('nsp-mobile-results');
+
+    let debounceTimer = null;
+    let activeFuel = '';
+
+    function formatPrice(val) {
+        const n = parseFloat(val);
+        if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
+        if (n >= 100000)   return '₹' + (n / 100000).toFixed(1) + ' L';
+        return '₹' + n.toLocaleString('en-IN');
+    }
+
+    function fuelClass(fuel) {
+        const map = { Petrol: 'nsp-fuel-petrol', Diesel: 'nsp-fuel-diesel', Electric: 'nsp-fuel-electric', Hybrid: 'nsp-fuel-hybrid', CNG: 'nsp-fuel-cng' };
+        return map[fuel] || 'nsp-fuel-petrol';
+    }
+
+    function buildCard(v) {
+        const name = v.brand + ' ' + v.model + (v.variant ? ' ' + v.variant : '');
+        const imgHtml = v.image
+            ? `<div class="nsp-card-img"><img src="${v.image}" alt="${name}" loading="lazy" onerror="this.parentElement.className='nsp-card-img-placeholder'; this.remove();"></div>`
+            : `<div class="nsp-card-img-placeholder"></div>`;
+        const priceHtml = v.offer_price
+            ? `<div class="nsp-card-price"><div class="price-offer">${formatPrice(v.offer_price)}</div><div class="price-orig">${formatPrice(v.price)}</div></div>`
+            : `<div class="nsp-card-price"><div class="price-main">${formatPrice(v.price)}</div></div>`;
+        const featuredBadge = v.is_featured ? `<span class="nsp-featured-badge">Featured</span>` : '';
+        const card = document.createElement('div');
+        card.className = 'nsp-card';
+        card.setAttribute('data-vehicle-id', v.id);
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+            ${imgHtml}
+            <div class="nsp-card-info">
+                <p class="nsp-card-name">${name}</p>
+                <div class="nsp-card-meta">
+                    <span class="nsp-fuel-badge ${fuelClass(v.fuel_type)}">${v.fuel_type}</span>
+                    ${v.body_type ? `<span>${v.body_type}</span>` : ''}
+                    ${featuredBadge}
+                </div>
+            </div>
+            ${priceHtml}
+            <span class="nsp-card-arrow">›</span>
+        `;
+        card.addEventListener('click', () => openVehicleModal(v.id));
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openVehicleModal(v.id); });
+        return card;
+    }
+
+    /* ── Vehicle Detail Modal ─────────────────────────────────── */
+    const vdOverlay  = document.getElementById('vd-overlay');
+    const vdClose    = document.getElementById('vd-close');
+    const vdLoading  = document.getElementById('vd-modal-loading');
+    const vdContent  = document.getElementById('vd-modal-content');
+
+    function fuelClassModal(fuel) {
+        const map = { Petrol:'nsp-fuel-petrol', Diesel:'nsp-fuel-diesel', Electric:'nsp-fuel-electric', Hybrid:'nsp-fuel-hybrid', CNG:'nsp-fuel-cng' };
+        return map[fuel] || 'nsp-fuel-petrol';
+    }
+
+    function openVehicleModal(id) {
+        // Show overlay + loading
+        vdOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        vdLoading.style.display = 'flex';
+        vdContent.style.display = 'none';
+
+        fetch(`/vehicle/${id}/detail/`)
+            .then(r => r.json())
+            .then(v => {
+                const fullName = v.brand + ' ' + v.model + (v.variant ? ' ' + v.variant : '');
+
+                // Hero image
+                const img = document.getElementById('vd-img');
+                if (v.image) {
+                    img.src = v.image;
+                    img.alt = fullName;
+                    document.getElementById('vd-hero').style.display = 'block';
+                } else {
+                    document.getElementById('vd-hero').style.display = 'none';
+                }
+
+                // Badges
+                const badges = document.getElementById('vd-hero-badges');
+                badges.innerHTML = '';
+                if (v.is_featured) badges.innerHTML += `<span class="vd-badge vd-badge-featured">Featured</span>`;
+                badges.innerHTML += `<span class="vd-badge nsp-fuel-badge ${fuelClassModal(v.fuel_type)}">${v.fuel_type}</span>`;
+                if (v.body_type) badges.innerHTML += `<span class="vd-badge vd-badge-body">${v.body_type}</span>`;
+
+                // Title
+                document.getElementById('vd-name').textContent = v.brand + ' ' + v.model;
+                const variantEl = document.getElementById('vd-variant');
+                variantEl.textContent = v.variant ? v.variant : '';
+                variantEl.style.display = v.variant ? 'block' : 'none';
+
+                // Price
+                const priceBlock = document.getElementById('vd-price-block');
+                if (v.offer_price) {
+                    const disc = v.discount_percentage ? `<span class="vd-discount">${v.discount_percentage}% OFF</span>` : '';
+                    priceBlock.innerHTML = `
+                        ${disc}
+                        <div class="vd-price-offer">${formatPrice(v.offer_price)}</div>
+                        <div class="vd-price-orig">${formatPrice(v.price)}</div>`;
+                } else {
+                    priceBlock.innerHTML = `<div class="vd-price-main">${formatPrice(v.price)}</div>`;
+                }
+
+                // Description
+                const descEl = document.getElementById('vd-description');
+                descEl.textContent = v.description || '';
+                descEl.style.display = v.description ? 'block' : 'none';
+
+                // Specs
+                const specs = [
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s1-4 9-4 9 4 9 4"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/><path d="M5 13V7l3-4h8l3 4v6"/></svg>', label: 'Fuel Type',    value: v.fuel_type },
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M21 12h-2M12 21v-2M12 5V3M5 12H3"/></svg>', label: 'Transmission', value: v.transmission },
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', label: 'Engine',       value: v.engine },
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', label: 'Mileage',      value: parseFloat(v.mileage) > 0 ? v.mileage + ' km/l' : 'EV / N/A' },
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', label: 'Seating',      value: v.seating_capacity + ' Seats' },
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="22" height="16" rx="3"/><path d="M1 10h22"/></svg>', label: 'Body Type',    value: v.body_type || '—' },
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>', label: 'Color',        value: v.color || '—' },
+                ];
+                const specsEl = document.getElementById('vd-specs');
+                specsEl.innerHTML = specs.map(s => `
+                    <div class="vd-spec-item">
+                        <span class="vd-spec-icon">${s.svg}</span>
+                        <div>
+                            <div class="vd-spec-label">${s.label}</div>
+                            <div class="vd-spec-value">${s.value}</div>
+                        </div>
+                    </div>`).join('');
+
+                // Show content
+                vdLoading.style.display = 'none';
+                vdContent.style.display = 'block';
+            })
+            .catch(() => {
+                vdLoading.innerHTML = '<p style="color:#ea3943">Failed to load vehicle details.</p>';
+            });
+    }
+
+    function closeVehicleModal() {
+        vdOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    vdClose.addEventListener('click', closeVehicleModal);
+    vdOverlay.addEventListener('click', e => {
+        if (e.target === vdOverlay) closeVehicleModal();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeVehicleModal();
+    });
+
+    function setState(state) {
+        loading.classList.remove('active');
+        empty.classList.remove('active');
+        results.innerHTML = '';
+        hint.style.display = 'none';
+        if (state === 'loading') loading.classList.add('active');
+        else if (state === 'empty') empty.classList.add('active');
+        else if (state === 'hint') hint.style.display = 'flex';
+    }
+
+    function doSearch(query, isDesktop) {
+        const targetResults = isDesktop ? results : mobileResults;
+
+        if (!query && !activeFuel && !minPriceInput.value && !maxPriceInput.value) {
+            if (isDesktop) { setState('hint'); }
+            else { targetResults.innerHTML = ''; }
+            return;
+        }
+
+        if (isDesktop) setState('loading');
+
+        const params = new URLSearchParams();
+        if (query) params.set('q', query);
+        if (activeFuel) params.set('fuel_type', activeFuel);
+        // Convert Lakhs → full rupees for the backend (DB stores full rupees)
+        if (minPriceInput.value) params.set('min_price', Math.round(parseFloat(minPriceInput.value) * 100000));
+        if (maxPriceInput.value) params.set('max_price', Math.round(parseFloat(maxPriceInput.value) * 100000));
+
+        fetch('/search/?' + params.toString())
+            .then(r => r.json())
+            .then(data => {
+                if (isDesktop) loading.classList.remove('active');
+                targetResults.innerHTML = '';
+                if (!data.results || data.results.length === 0) {
+                    if (isDesktop) setState('empty');
+                    else targetResults.innerHTML = '<p style="color:rgba(255,255,255,0.35);font-size:0.82rem;padding:8px 0;">No vehicles found</p>';
+                    return;
+                }
+                data.results.forEach(v => {
+                    targetResults.appendChild(buildCard(v, true));
+                });
+                if (isDesktop && results.innerHTML) empty.classList.remove('active');
+            })
+            .catch(() => {
+                if (isDesktop) setState('empty');
+            });
+    }
+
+    function triggerSearch(isDesktop) {
+        const q = isDesktop ? searchInput.value.trim() : mobileInput.value.trim();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => doSearch(q, isDesktop), 300);
+    }
+
+    // Desktop search input
+    searchInput.addEventListener('input', function() {
+        clearBtn.classList.toggle('visible', this.value.length > 0);
+        popup.classList.add('active');
+        triggerSearch(true);
+    });
+
+    searchInput.addEventListener('focus', function() {
+        popup.classList.add('active');
+        if (!this.value && !activeFuel) setState('hint');
+    });
+
+    // Clear button
+    clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearBtn.classList.remove('visible');
+        chips.forEach(c => c.classList.remove('active'));
+        activeFuel = '';
+        minPriceInput.value = '';
+        maxPriceInput.value = '';
+        setState('hint');
+        searchInput.focus();
+    });
+
+    // Fuel chips
+    chips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            if (this.classList.contains('active')) {
+                this.classList.remove('active');
+                activeFuel = '';
+            } else {
+                chips.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                activeFuel = this.dataset.fuel;
+            }
+            triggerSearch(true);
+        });
+    });
+
+    // Price range inputs
+    [minPriceInput, maxPriceInput].forEach(inp => {
+        inp.addEventListener('input', () => triggerSearch(true));
+    });
+
+    // Mobile search
+    mobileInput.addEventListener('input', function() {
+        triggerSearch(false);
+    });
+
+    // Close popup on outside click
+    document.addEventListener('click', function(e) {
+        const wrap = document.getElementById('nav-search-wrap');
+        if (wrap && !wrap.contains(e.target)) {
+            popup.classList.remove('active');
+        }
+    });
+
+    // Navbar scroll logic
     const nav = document.getElementById('site-nav');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 40) {
-            nav.classList.add('nav-scrolled');
-        } else {
-            nav.classList.remove('nav-scrolled');
-        }
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
     });
 
     // Mobile menu toggle
@@ -98,4 +1152,5 @@
         hamburger.classList.toggle('open');
         mobileMenu.classList.toggle('open');
     });
+})();
 </script>

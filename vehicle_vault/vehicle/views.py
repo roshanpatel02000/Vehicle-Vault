@@ -79,6 +79,87 @@ def homeView(request):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+def searchVehiclesView(request):
+    """AJAX search endpoint: GET /search/?q=&fuel_type=&min_price=&max_price="""
+    from django.db.models import Q
+
+    q          = request.GET.get('q', '').strip()
+    fuel_type  = request.GET.get('fuel_type', '').strip()
+    min_price  = request.GET.get('min_price', '').strip()
+    max_price  = request.GET.get('max_price', '').strip()
+
+    vehicles = Vehicle.objects.all()
+
+    if q:
+        vehicles = vehicles.filter(
+            Q(brand__icontains=q) |
+            Q(model__icontains=q) |
+            Q(variant__icontains=q) |
+            Q(fuel_type__icontains=q)
+        )
+
+    if fuel_type:
+        vehicles = vehicles.filter(fuel_type__iexact=fuel_type)
+
+    try:
+        if min_price:
+            vehicles = vehicles.filter(price__gte=Decimal(min_price))
+        if max_price:
+            vehicles = vehicles.filter(price__lte=Decimal(max_price))
+    except Exception:
+        pass
+
+    vehicles = vehicles.order_by('-is_featured', 'brand', 'model')[:8]
+
+    results = []
+    for v in vehicles:
+        results.append({
+            'id':          v.pk,
+            'brand':       v.brand,
+            'model':       v.model,
+            'variant':     v.variant or '',
+            'price':       str(v.price),
+            'offer_price': str(v.offer_price) if v.offer_price else None,
+            'fuel_type':   v.fuel_type,
+            'body_type':   v.body_type or '',
+            'image':       v.get_display_image(),
+            'is_featured': v.is_featured,
+        })
+
+    return JsonResponse({'results': results, 'count': len(results)})
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+def vehicleDetailView(request, vehicle_id):
+    """JSON endpoint: GET /vehicle/<id>/detail/ — returns full vehicle specs."""
+    try:
+        v = Vehicle.objects.get(pk=vehicle_id)
+    except Vehicle.DoesNotExist:
+        return JsonResponse({'error': 'Vehicle not found.'}, status=404)
+
+    data = {
+        'id':                  v.pk,
+        'brand':               v.brand,
+        'model':               v.model,
+        'variant':             v.variant or '',
+        'price':               str(v.price),
+        'offer_price':         str(v.offer_price) if v.offer_price else None,
+        'discount_percentage': v.discount_percentage,
+        'fuel_type':           v.fuel_type,
+        'transmission':        v.transmission,
+        'engine':              v.engine,
+        'mileage':             str(v.mileage),
+        'seating_capacity':    v.seating_capacity,
+        'body_type':           v.body_type or '',
+        'color':               v.color or '',
+        'description':         v.description or '',
+        'image':               v.get_display_image(),
+        'is_featured':         v.is_featured,
+    }
+    return JsonResponse(data)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 def comparisonPageView(request):
     """Dedicated comparison page: GET /compare/?v1=ID&v2=ID"""
     v1_id = request.GET.get('v1')

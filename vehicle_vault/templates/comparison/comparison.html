@@ -10,19 +10,19 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.default.min.css" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1f2937; min-height: 100vh; padding-top: 0 !important; margin: 0 !important; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f2f5; color: #1f2937; min-height: 100vh; padding-top: 0 !important; margin: 0 !important; }
 
         /* TomSelect overrides */
         .ts-wrapper.cmp-picker-select .ts-control {
             padding: 13px 16px;
             border: 1.5px solid #e5e7eb;
             border-radius: 12px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 14px;
             color: #1f2937;
             background: #fafafa;
@@ -34,7 +34,7 @@
             box-shadow: 0 0 0 3px rgba(255,90,0,0.1);
         }
         .ts-dropdown {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 14px;
             border-radius: 12px;
             border: 1px solid #e5e7eb;
@@ -60,7 +60,7 @@
             box-shadow: 0 4px 32px rgba(0,0,0,0.5);
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .cmp-logo { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; transition: transform 0.2s;}
+        .cmp-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; transition: transform 0.2s;}
         .cmp-logo:hover { transform: scale(1.02); }
         .cmp-logo span { color: #ff5a00; }
         .cmp-back {
@@ -84,7 +84,7 @@
             pointer-events: none;
         }
         .cmp-hero-tag { display: none; } /* Hide subtext to save space */
-        .cmp-hero-title { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -1px; position: relative; z-index: 2; margin: 0;}
+        .cmp-hero-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -1px; position: relative; z-index: 2; margin: 0;}
         .cmp-hero-title span { color: transparent; background: linear-gradient(135deg, #ff5a00, #ff3300); -webkit-background-clip: text; background-clip: text; }
 
         /* ── Picker form ── */
@@ -105,15 +105,15 @@
         .cmp-picker-label { display: none; } /* Hide labels to save space */
         .cmp-picker-select {
             width: 100%; padding: 10px 14px; border: 2px solid #f3f4f6;
-            border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+            border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500;
             color: #111827; background: #ffffff; appearance: none; outline: none;
             cursor: pointer; transition: all 0.25s;
         }
         .cmp-picker-select:focus { border-color: #ff5a00; box-shadow: 0 0 0 3px rgba(255,90,0,0.15); background: #fffaf7; }
-        .cmp-vs { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: #d1d5db; flex-shrink: 0; padding: 0 8px; }
+        .cmp-vs { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 900; color: #d1d5db; flex-shrink: 0; padding: 0 8px; }
         .cmp-go-btn {
             background: linear-gradient(135deg,#ff5a00,#ff3300); color:#fff;
-            font-family:'Montserrat',sans-serif; font-size:12px; font-weight:800; letter-spacing:0.1em;
+            font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:800; letter-spacing:0.1em;
             padding:12px 24px; border:none; border-radius:10px; cursor:pointer;
             box-shadow:0 4px 12px rgba(255,90,0,0.3); transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space:nowrap;
         }
@@ -130,7 +130,7 @@
         }
         .cmp-error-icon { font-size: 32px; margin-bottom: 12px; display: inline-block; animation: shake 0.5s ease-in-out; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
-        .cmp-error-card h3 { font-family:'Montserrat',sans-serif; font-size:20px; font-weight: 800; color:#dc2626; margin-bottom:8px; }
+        .cmp-error-card h3 { font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight: 800; color:#dc2626; margin-bottom:8px; }
         .cmp-error-card p { color:#4b5563; font-size:14px; }
 
         /* ── Two-Column Layout for Single Screen ── */
@@ -145,10 +145,10 @@
         .cmp-v-img img { width:100%;height:100%;object-fit:cover;opacity:0.95; }
         .cmp-v-img-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(13,15,20,0.98) 0%, rgba(13,15,20,0.4) 50%, transparent 100%); }
         .cmp-v-img-text { position:absolute;bottom:12px;left:16px; right:16px; }
-        .cmp-v-tag { font-family:'Inter',sans-serif;font-size:11px;font-weight:800;color:#ff5a00;text-transform:uppercase;letter-spacing:0.1em; margin-bottom: 2px; }
-        .cmp-v-name { font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.5px; line-height: 1.1; text-shadow: 0 2px 8px rgba(0,0,0,0.6); margin-top: 4px;}
+        .cmp-v-tag { font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;color:#ff5a00;text-transform:uppercase;letter-spacing:0.1em; margin-bottom: 2px; }
+        .cmp-v-name { font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.5px; line-height: 1.1; text-shadow: 0 2px 8px rgba(0,0,0,0.6); margin-top: 4px;}
         .cmp-v-body { padding: 12px 16px; flex-grow: 1; display:flex; flex-direction:column; justify-content:center;}
-        .cmp-v-price { font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:#0d0f14; letter-spacing: -0.5px;}
+        .cmp-v-price { font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:900;color:#0d0f14; letter-spacing: -0.5px;}
         .cmp-v-offer { font-size:12px;color:#9ca3af;text-decoration:line-through;margin-left:8px; font-weight: 600; }
         .cmp-v-winner-badge { display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#ff5a00,#ff3300);color:#fff;font-size:10px;font-weight:800;border-radius:12px;padding:4px 10px;margin-top:8px; box-shadow: 0 4px 8px rgba(255,90,0,0.3); text-transform: uppercase; letter-spacing: 0.05em; align-self: flex-start;}
 
@@ -156,18 +156,18 @@
         .cmp-sim-card { flex:0 0 120px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.05);display:flex;flex-direction:column;align-items:center;justify-content:center; border: 1px solid rgba(0,0,0,0.03);}
         .cmp-sim-card h4 { font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.1em; margin-bottom: 4px; }
         .cmp-ring-wrap { position:relative;display:inline-flex;align-items:center;justify-content:center; }
-        .cmp-ring-pct { position:absolute;font-family:'Montserrat',sans-serif;font-size:16px;font-weight:900;color:#0d0f14; }
+        .cmp-ring-pct { position:absolute;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:900;color:#0d0f14; }
         .cmp-best-card { flex:1;background:linear-gradient(135deg,#fffaf7 0%,#fff 100%);border:1.5px solid rgba(255,90,0,0.2);border-radius:16px;padding:16px;box-shadow:0 12px 32px rgba(255,90,0,0.1);display:flex;align-items:center;gap:16px; position: relative; overflow: hidden;}
         .cmp-best-icon { width:48px;height:48px;background:linear-gradient(135deg, rgba(255,90,0,0.15), rgba(255,90,0,0.05));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#ff5a00;flex-shrink:0; box-shadow: inset 0 0 0 1px rgba(255,90,0,0.1); }
         .cmp-best-icon svg { width: 24px; height: 24px; }
         .cmp-best-label { font-size:10px;font-weight:800;color:#ff5a00;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px; }
-        .cmp-best-name { font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:#0d0f14; line-height: 1.1; letter-spacing: -0.5px;}
+        .cmp-best-name { font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:900;color:#0d0f14; line-height: 1.1; letter-spacing: -0.5px;}
 
         /* ── Right Column: Comparison Table ── */
         .cmp-table-wrap { background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.04); height: 100%; display: flex; flex-direction: column;}
         .cmp-table-head { display:grid;grid-template-columns:100px 1fr 1fr;background:linear-gradient(to right, #f8f9fa, #ffffff);border-bottom:2px solid #e5e7eb; }
-        .cmp-table-head-cell { padding:12px 10px;font-size:12px;font-weight:900;color:#111827;text-align:center; font-family: 'Montserrat', sans-serif;}
-        .cmp-table-head-cell:first-child { text-align:left;color:#6b7280;font-size:10px;font-weight: 800; text-transform:uppercase;letter-spacing:0.05em; font-family: 'Inter', sans-serif;}
+        .cmp-table-head-cell { padding:12px 10px;font-size:12px;font-weight:900;color:#111827;text-align:center; font-family: 'Plus Jakarta Sans', sans-serif;}
+        .cmp-table-head-cell:first-child { text-align:left;color:#6b7280;font-size:10px;font-weight: 800; text-transform:uppercase;letter-spacing:0.05em; font-family: 'Plus Jakarta Sans', sans-serif;}
         .cmp-table-body { flex-grow: 1; display:flex; flex-direction:column; justify-content: space-between;}
         .cmp-table-row { display:grid;grid-template-columns:100px 1fr 1fr;border-bottom:1px solid #f3f4f6; transition: background 0.3s; flex-grow:1;}
         .cmp-table-row:hover { background: #fafafa; }
