@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - Vehicle Vault{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2 class="auth-title">Create Your Account</h2>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            <strong>Error!</strong>
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-error">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+        </form>
+
+        <div class="auth-divider"></div>
+
+        <p class="auth-footer-text">
+            Already have an account?
+            <a href="{% url 'login' %}" class="auth-link">Login</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

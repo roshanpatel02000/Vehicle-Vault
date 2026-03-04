@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify OTP - Vehicle Vault{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .otp-box-wrapper {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 24px 0 8px;
+  }
+  .otp-digit {
+    width: 52px;
+    height: 60px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    caret-color: #6236ff;
+  }
+  .otp-digit:focus {
+    border-color: #6236ff;
+    box-shadow: 0 0 0 3px rgba(98,54,255,0.25);
+  }
+  .otp-hint {
+    color: #aaa;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .otp-timer {
+    text-align: center;
+    font-size: 0.88rem;
+    color: #888;
+    margin-bottom: 14px;
+  }
+  .otp-timer span {
+    color: #6236ff;
+    font-weight: 600;
+  }
+  .otp-resend-btn {
+    background: none;
+    border: none;
+    color: #6236ff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    padding: 0;
+    display: block;
+    margin: 0 auto 20px;
+  }
+  .otp-resend-btn:disabled {
+    color: #888;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+  .purpose-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .purpose-signup { background: rgba(76,175,80,0.15); color: #4CAF50; }
+  .purpose-login  { background: rgba(98,54,255,0.15);  color: #6236ff; }
+  .purpose-reset  { background: rgba(243,156,18,0.15); color: #f39c12; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div style="text-align: center;">
+      {% if purpose == 'signup' %}
+        <span class="purpose-badge purpose-signup">Signup Verification</span>
+      {% elif purpose == 'login' %}
+        <span class="purpose-badge purpose-login">Login Verification</span>
+      {% else %}
+        <span class="purpose-badge purpose-reset">Password Reset</span>
+      {% endif %}
+    </div>
+
+    <h2 class="auth-title">Enter OTP</h2>
+    <p class="otp-hint">We sent a 6-digit code to <strong>{{ email }}</strong></p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" id="otp-form" novalidate>
+      {% csrf_token %}
+      <!-- 6 individual digit boxes -->
+      <div class="otp-box-wrapper">
+        {% for i in "123456" %}
+          <input type="text" maxlength="1" class="otp-digit" id="d{{ i }}" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+        {% endfor %}
+      </div>
+      <!-- hidden combined field -->
+      <input type="hidden" name="code" id="otp-hidden">
+
+      {% if form.code.errors %}
+        <div class="field-error" style="text-align:center; margin-bottom:10px;">
+          {% for error in form.code.errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="otp-timer">Code expires in: <span id="countdown">02:00</span></div>
+
+      <button type="submit" class="btn btn-primary btn-full" id="submit-btn">Verify OTP</button>
+    </form>
+
+    <form method="POST" action="{% url 'resend_otp' %}" style="margin-top:12px;">
+      {% csrf_token %}
+      <button type="submit" class="otp-resend-btn" id="resend-btn" disabled>
+        Resend OTP (wait <span id="resend-countdown">60</span>s)
+      </button>
+    </form>
+
+    <div class="auth-divider"></div>
+    <p class="auth-footer-text">
+      <a href="{% url 'login' %}" class="auth-link">← Back to Login</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // ── OTP digit focus management ────────────────────────────
+  const digits = document.querySelectorAll('.otp-digit');
+  const hidden = document.getElementById('otp-hidden');
+  const form   = document.getElementById('otp-form');
+
+  digits.forEach((el, idx) => {
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/\D/g, '').slice(-1);
+      if (el.value && idx < digits.length - 1) digits[idx + 1].focus();
+      syncHidden();
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !el.value && idx > 0) {
+        digits[idx - 1].focus();
+        digits[idx - 1].value = '';
+        syncHidden();
+      }
+      if (e.key === 'ArrowLeft'  && idx > 0)                  digits[idx - 1].focus();
+      if (e.key === 'ArrowRight' && idx < digits.length - 1)  digits[idx + 1].focus();
+    });
+    // Paste support
+    el.addEventListener('paste', e => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0, 6);
+      pasted.split('').forEach((ch, i) => { if (digits[i]) digits[i].value = ch; });
+      if (digits[Math.min(pasted.length, 5)]) digits[Math.min(pasted.length, 5)].focus();
+      syncHidden();
+    });
+  });
+
+  function syncHidden() {
+    hidden.value = Array.from(digits).map(d => d.value).join('');
+  }
+
+  form.addEventListener('submit', e => {
+    syncHidden();
+    if (hidden.value.length !== 6) {
+      e.preventDefault();
+      alert('Please enter all 6 digits of the OTP.');
+    }
+  });
+
+  digits[0].focus();
+
+  // ── Expiry countdown (2 min) ─────────────────────────────
+  let totalSec = 120;
+  const cntEl = document.getElementById('countdown');
+  const submitBtn = document.getElementById('submit-btn');
+  const timer = setInterval(() => {
+    totalSec--;
+    if (totalSec <= 0) {
+      clearInterval(timer);
+      cntEl.textContent = 'Expired';
+      cntEl.style.color = '#ea3943';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'OTP Expired – Request New';
+    } else {
+      const m = Math.floor(totalSec / 60).toString().padStart(2,'0');
+      const s = (totalSec % 60).toString().padStart(2,'0');
+      cntEl.textContent = `${m}:${s}`;
+    }
+  }, 1000);
+
+  // ── Resend countdown (60 s) ───────────────────────────────
+  let resendSec = 60;
+  const resendBtn   = document.getElementById('resend-btn');
+  const resendCntEl = document.getElementById('resend-countdown');
+  const resendTimer = setInterval(() => {
+    resendSec--;
+    resendCntEl.textContent = resendSec;
+    if (resendSec <= 0) {
+      clearInterval(resendTimer);
+      resendBtn.disabled = false;
+      resendBtn.textContent = 'Resend OTP';
+    }
+  }, 1000);
+</script>
+{% endblock %}

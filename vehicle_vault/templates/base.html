@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Vehicle Vault{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5" />
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% block navbar %}
+    {% include 'navbar.html' %}
+    {% endblock %}
+
+    <div class="page-layout">
+        {% block sidebar %}
+        {% include 'sidebar.html' %}
+        {% endblock %}
+
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Toast Notifications -->
+    {% if messages %}
+    <div class="vv-toast-container" id="vv-toast-container">
+        {% for message in messages %}
+        <div class="vv-toast vv-toast-{{ message.tags }}">
+            <div class="vv-toast-icon">
+                {% if message.tags == 'success' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #4CAF50;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                {% elif message.tags == 'error' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #ea3943;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                {% else %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #6236ff;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                {% endif %}
+            </div>
+            <div class="vv-toast-content">
+                <p>{{ message }}</p>
+            </div>
+            <button class="vv-toast-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Auto-dismiss toasts after 5 seconds
+        document.addEventListener("DOMContentLoaded", function() {
+            const toasts = document.querySelectorAll('.vv-toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-10px)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+    {% endif %}
+    
+    <style>
+        .vv-toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .vv-toast {
+            background: #1e1e24; /* Dark cinematic background */
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            min-width: 300px;
+            animation: vv-toast-in 0.3s ease forwards;
+            transition: all 0.3s ease;
+        }
+        .vv-toast-error { border-left-color: #ea3943; }
+        .vv-toast-warning { border-left-color: #f39c12; }
+        .vv-toast-info { border-left-color: #6236ff; }
+        .vv-toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vv-toast-content p {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .vv-toast-close {
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            margin-left: auto;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .vv-toast-close:hover { color: #fff; }
+        @keyframes vv-toast-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+
+    <!-- Global Password Visibility Toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            
+            passwordInputs.forEach(input => {
+                // Create a relative wrapper
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.display = 'block';
+                wrapper.style.width = '100%';
+                
+                // Insert wrapper before input, then move input inside
+                input.parentNode.insertBefore(wrapper, input);
+                wrapper.appendChild(input);
+                
+                // Add right padding so text doesn't overlap icon
+                input.style.paddingRight = '45px';
+                
+                // Create toggle button
+                const toggleBtn = document.createElement('button');
+                toggleBtn.type = 'button';
+                toggleBtn.className = 'vv-password-toggle';
+                toggleBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+                
+                // Style toggle securely
+                toggleBtn.style.position = 'absolute';
+                toggleBtn.style.right = '12px';
+                toggleBtn.style.top = '50%';
+                toggleBtn.style.transform = 'translateY(-50%)';
+                toggleBtn.style.background = 'transparent';
+                toggleBtn.style.border = 'none';
+                toggleBtn.style.color = 'rgba(255,255,255,0.4)';
+                toggleBtn.style.cursor = 'pointer';
+                toggleBtn.style.display = 'flex';
+                toggleBtn.style.alignItems = 'center';
+                toggleBtn.style.justifyContent = 'center';
+                toggleBtn.style.padding = '4px';
+                toggleBtn.style.transition = 'color 0.2s';
+                toggleBtn.style.outline = 'none';
+                
+                // Hover Effects
+                toggleBtn.addEventListener('mouseover', () => toggleBtn.style.color = '#ff5a00');
+                toggleBtn.addEventListener('mouseout', () => toggleBtn.style.color = 'rgba(255,255,255,0.4)');
+                
+                // Interaction logic
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent form submit
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        toggleBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22"></path></svg>';
+                    } else {
+                        input.type = 'password';
+                        toggleBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+                    }
+                });
+                
+                wrapper.appendChild(toggleBtn);
+            });
+        });
+    </script>
+    
+</body>
+</html>

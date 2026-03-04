@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Vehicle Vault</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <!-- MAIN EMAIL CONTAINER -->
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #111318; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin: 0 auto; max-width: 600px; width: 100%;">
+                    
+                    <!-- Header / Logo -->
+                    <tr>
+                        <td align="center" style="padding: 40px 20px 20px;">
+                            <h1 style="margin: 0; font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Vehicle<span style="color: #ff5a00;">Vault</span></h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Text -->
+                    <tr>
+                        <td align="center" style="padding: 10px 40px 30px;">
+                            <p style="margin: 0; font-size: 16px; color: #d1d5db; line-height: 1.5; font-weight: 500;">
+                                Get your hands on India's premium
+                            </p>
+                            <h2 style="margin: 10px 0 0; font-size: 36px; font-weight: 900; color: #ffffff; line-height: 1.2;">
+                                Vehicle<br><span style="color: #ff5a00;">Marketplace</span>
+                            </h2>
+                            <p style="margin: 20px 0 0; font-size: 16px; color: #9ca3af; line-height: 1.6;">
+                                Hi {{ name }}, your account has been successfully created! Welcome aboard. Discover thousands of verified vehicles at the best prices.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Button -->
+                    <tr>
+                        <td align="center" style="padding: 10px 40px 40px;">
+                            <table cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center" bgcolor="#ff5a00" style="border-radius: 30px;">
+                                        <a href="{{ site_url }}" style="display: inline-block; padding: 16px 36px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 700; color: #ffffff; text-decoration: none; border-radius: 30px; letter-spacing: 0.5px;">Explore Vehicles</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Central Graphic / Member Card -->
+                    <tr>
+                        <td align="center" style="padding: 0 40px 40px;">
+                            <!-- The Card -->
+                            <div style="background: linear-gradient(135deg, #1f232b, #0d0f14); border: 2px solid rgba(255, 90, 0, 0.2); border-radius: 20px; padding: 30px; position: relative; max-width: 400px; text-align: left; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                                <h3 style="margin: 0 0 24px; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #ff5a00; font-weight: 800;">Member Access</h3>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <div style="width: 45px; height: 30px; background: #eab308; border-radius: 6px; opacity: 0.9; margin-bottom: 5px;"></div>
+                                </div>
+
+                                <p style="margin: 0; font-size: 22px; color: #ffffff; font-weight: 600; font-family: monospace; letter-spacing: 1px; word-break: break-all;">
+                                    {{ email }}
+                                </p>
+                                <p style="margin: 8px 0 0; font-size: 12px; color: #6b7280; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">
+                                    {{ role|default:"Verfied User" }}
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer Accent Banner -->
+                    <tr>
+                        <td align="center" bgcolor="#ff5a00" style="padding: 20px; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+                            <p style="margin: 0; font-size: 14px; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">
+                                Start buying, selling, or renting today!
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <!-- Bottom Links / Disclaimer -->
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; max-width: 600px; width: 100%;">
+                    <tr>
+                        <td align="center" style="padding: 20px 20px 40px;">
+                            <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                                <a href="{{ site_url }}" style="color: #4b5563; text-decoration: none; font-weight: 600; margin: 0 10px;">Website</a> |
+                                <a href="{{ site_url }}" style="color: #4b5563; text-decoration: none; font-weight: 600; margin: 0 10px;">Privacy Policy</a> |
+                                <a href="{{ site_url }}" style="color: #4b5563; text-decoration: none; font-weight: 600; margin: 0 10px;">Disclaimer</a>
+                            </p>
+                            <p style="margin: 15px 0 0; font-size: 10px; color: #9ca3af; line-height: 1.5;">
+                                This email was sent to {{ email }} because you registered on Vehicle Vault.<br>
+                                If you did not make this request, please ignore this email.<br>
+                                © 2026 Vehicle Vault. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

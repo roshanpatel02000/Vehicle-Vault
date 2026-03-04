@@ -1,0 +1,30 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h3 class="sidebar-title">User Dashboard</h3>
+        <p class="sidebar-email">
+            {% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.email }}{% endif %}
+        </p>
+    </div>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav">
+        <a href="{% url 'user_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'user_dashboard' %}active{% endif %}">
+            <span class="sidebar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Dashboard Overview
+        </a>
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span> My Vehicles
+        </a>
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span> Services
+        </a>
+        <a href="#" class="sidebar-link">
+            <span class="sidebar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> My Bookings
+        </a>
+        <div class="sidebar-divider"></div>
+        <a href="{% url 'profile_settings' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile_settings' %}active{% endif %}">
+            <span class="sidebar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Profile Settings
+        </a>
+        <a href="{% url 'logout' %}" class="sidebar-link">
+            <span class="sidebar-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> Logout
+        </a>
+    </nav>
+</aside>
