@@ -42,6 +42,8 @@ class Vehicle(models.Model):
     image_file          = models.ImageField(upload_to='vehicles/', blank=True, null=True)
     image_url           = models.URLField(max_length=255, blank=True, null=True)
     is_featured         = models.BooleanField(default=False)
+    safety_rating       = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    search_count        = models.IntegerField(default=0)
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
@@ -80,6 +82,7 @@ class Vehicle(models.Model):
             'body_type': self.body_type or '',
             'color': self.color or '',
             'image': self.get_display_image(),
+            'safety_rating': str(self.safety_rating) if self.safety_rating is not None else None,
         }
 
 

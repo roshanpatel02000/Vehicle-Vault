@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import F, Q
 from decimal import Decimal
 import json
 
@@ -69,12 +70,56 @@ def _run_comparison(v1, v2):
 # ──────────────────────────────────────────────────────────────────────────────
 def homeView(request):
     featured_vehicles = Vehicle.objects.filter(is_featured=True).order_by('-created_at')
+    most_searched_vehicles = Vehicle.objects.all().order_by('-search_count')[:6]
     all_vehicles      = Vehicle.objects.all().order_by('brand', 'model')
     vehicle_count     = Vehicle.objects.count()
     return render(request, "home.html", {
         'featured_vehicles': featured_vehicles,
+        'most_searched_vehicles': most_searched_vehicles,
         'all_vehicles': all_vehicles,
         'vehicle_count': vehicle_count,
+    })
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+def allVehiclesView(request):
+    """Browse all vehicles page with optional filters."""
+    from django.db.models import Q
+
+    q          = request.GET.get('q', '').strip()
+    fuel_type  = request.GET.get('fuel', '').strip()
+    body_type  = request.GET.get('body', '').strip()
+
+    vehicles = Vehicle.objects.all()
+
+    if q:
+        vehicles = vehicles.filter(
+            Q(brand__icontains=q) |
+            Q(model__icontains=q) |
+            Q(variant__icontains=q)
+        )
+        # Increment search count for vehicles in results
+        vehicles.update(search_count=F('search_count') + 1)
+
+    if fuel_type:
+        vehicles = vehicles.filter(fuel_type__iexact=fuel_type)
+
+    if body_type:
+        vehicles = vehicles.filter(body_type__iexact=body_type)
+
+    vehicles = vehicles.order_by('-is_featured', 'brand', 'model')
+
+    fuel_choices = Vehicle.FUEL_CHOICES
+    body_choices = Vehicle.BODY_CHOICES
+
+    return render(request, "vehicle/all_vehicles.html", {
+        'vehicles': vehicles,
+        'vehicle_count': vehicles.count(),
+        'fuel_choices': fuel_choices,
+        'body_choices': body_choices,
+        'selected_fuel': fuel_type,
+        'selected_body': body_type,
+        'search_query': q,
     })
 
 
@@ -402,12 +447,15 @@ def compareVehiclesView(request):
 @role_required(allowed_roles=["Admin"])
 def AdminDashboardView(request):
     from core.models import User
+    from Notification.models import Notification
     total_users = User.objects.count()
     total_vehicles = Vehicle.objects.count()
+    total_notifications = Notification.objects.count()
     
     context = {
         'total_users': total_users,
-        'total_vehicles': total_vehicles
+        'total_vehicles': total_vehicles,
+        'total_notifications': total_notifications
     }
     return render(request, "vehicle/admin/Admin_dashboard.html", context)
 
@@ -415,7 +463,11 @@ def AdminDashboardView(request):
 @login_required(login_url="login")
 @role_required(allowed_roles=["User"])
 def UserDashboardView(request):
-    return render(request, "vehicle/user/User_dashboard.html")
+    from Notification.models import UserNotification
+    unread_notifications = UserNotification.objects.filter(user=request.user, is_read=False).count()
+    return render(request, "vehicle/user/User_dashboard.html", {
+        'total_notifications': unread_notifications
+    })
 
 # ─── Admin Approvals ────────────────────────────────────────────────────────
 @login_required(login_url="login")
@@ -516,6 +568,26 @@ def DeleteVehicleView(request, vehicle_id):
         messages.success(request, f"Vehicle '{name}' has been permanently deleted.")
     
     return redirect('manage_vehicles')
+
+@login_required(login_url="login")
+@role_required(allowed_roles=["Admin"])
+def EditVehicleView(request, vehicle_id):
+    from .forms import VehicleForm
+    from django.shortcuts import get_object_or_404
+    from django.contrib import messages
+
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+    if request.method == "POST":
+        form = VehicleForm(request.POST, request.FILES, instance=vehicle)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Vehicle '{vehicle.brand} {vehicle.model}' updated successfully.")
+            return redirect('manage_vehicles')
+    else:
+        form = VehicleForm(instance=vehicle)
+
+    return render(request, "vehicle/admin/edit_vehicle.html", {'form': form, 'vehicle': vehicle})
 
 @login_required(login_url="login")
 @role_required(allowed_roles=["Admin"])

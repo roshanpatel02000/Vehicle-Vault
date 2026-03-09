@@ -5,35 +5,83 @@
 {% block sidebar %}{% endblock %}
 
 {% block content %}
+<style>
+/* Compact two-column grid for signup extra fields */
+.signup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+}
+.signup-grid .form-group { margin-bottom: 16px; }
+.signup-grid .span-full  { grid-column: 1 / -1; }
+@media (max-width: 480px) { .signup-grid { grid-template-columns: 1fr; } }
+</style>
+
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h2 class="auth-title">Create Your Account</h2>
+        <h2 class="auth-title">Create Account</h2>
 
         {% if form.non_field_errors %}
         <div class="alert alert-error">
             <strong>Error!</strong>
-            {% for error in form.non_field_errors %}
-                <div>{{ error }}</div>
-            {% endfor %}
+            {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
         </div>
         {% endif %}
 
         <form method="POST" novalidate>
             {% csrf_token %}
+            <div class="signup-grid">
 
-            {% for field in form %}
+                <!-- First Name -->
                 <div class="form-group">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="field-error">
-                            {% for error in field.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<div class="field-error">{% for e in form.first_name.errors %}{{ e }}{% endfor %}</div>{% endif %}
                 </div>
-            {% endfor %}
+
+                <!-- Last Name -->
+                <div class="form-group">
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<div class="field-error">{% for e in form.last_name.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                </div>
+
+                <!-- Gender -->
+                <div class="form-group">
+                    {{ form.gender.label_tag }}
+                    {{ form.gender }}
+                    {% if form.gender.errors %}<div class="field-error">{% for e in form.gender.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                </div>
+
+                <!-- Role -->
+                <div class="form-group">
+                    {{ form.role.label_tag }}
+                    {{ form.role }}
+                    {% if form.role.errors %}<div class="field-error">{% for e in form.role.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                </div>
+
+                <!-- Email (full width) -->
+                <div class="form-group span-full">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {% if form.email.errors %}<div class="field-error">{% for e in form.email.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}<div class="field-error">{% for e in form.password1.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}<div class="field-error">{% for e in form.password2.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                </div>
+
+            </div>
 
             <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
         </form>

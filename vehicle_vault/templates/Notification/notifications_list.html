@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notification History - Vehicle Vault{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notif-history-container {
+        padding: 40px 20px !important;
+        max-width: 900px !important;
+        margin: 0 auto !important;
+    }
+    .notif-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 30px !important;
+    }
+    .notif-title {
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        color: #fff !important;
+    }
+    .notif-list {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    .notif-card {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    .notif-card:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(98, 54, 255, 0.3) !important;
+        transform: translateY(-2px) !important;
+    }
+    .notif-card.unread {
+        border-left: 4px solid #6236ff !important;
+        background: rgba(98, 54, 255, 0.05) !important;
+    }
+    .notif-card-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-bottom: 8px !important;
+    }
+    .notif-card-title {
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        color: #fff !important;
+    }
+    .notif-card-time {
+        font-size: 0.8rem !important;
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+    .notif-card-msg {
+        font-size: 0.95rem !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        line-height: 1.5 !important;
+    }
+    .unread-dot {
+        width: 8px !important;
+        height: 8px !important;
+        background: #6236ff !important;
+        border-radius: 50% !important;
+        display: inline-block !important;
+        margin-right: 8px !important;
+    }
+    .pagination {
+        margin-top: 40px !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 10px !important;
+    }
+    .page-link {
+        padding: 8px 16px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        text-decoration: none !important;
+        transition: all 0.2s !important;
+    }
+    .page-link:hover, .page-link.active {
+        background: #6236ff !important;
+        border-color: #6236ff !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notif-history-container">
+    <div class="notif-header">
+        <h1 class="notif-title">Notifications</h1>
+    </div>
+
+    <div class="notif-list">
+        {% for user_notif in page_obj %}
+        <div class="notif-card {% if not user_notif.is_read %}unread{% endif %}" id="notif-{{ user_notif.id }}">
+            <div class="notif-card-header">
+                <span class="notif-card-title">
+                    {% if not user_notif.is_read %}<span class="unread-dot"></span>{% endif %}
+                    {{ user_notif.notification.title }}
+                </span>
+                <span class="notif-card-time">{{ user_notif.notification.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <p class="notif-card-msg">{{ user_notif.notification.message }}</p>
+            {% if not user_notif.is_read %}
+            <button class="btn-mark-read" data-id="{{ user_notif.id }}" style="background: transparent; border: none; color: #6236ff; font-size: 0.8rem; cursor: pointer; padding: 0; margin-top: 10px;">Mark as read</button>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="text-center py-5" style="color: rgba(255,255,255,0.4)">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <p>No notifications yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo;</a>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        <a href="?page={{ num }}" class="page-link {% if page_obj.number == num %}active{% endif %}">{{ num }}</a>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="page-link">&raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll('.btn-mark-read').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            fetch(`/notifications/mark-as-read/${id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const card = document.getElementById(`notif-${id}`);
+                        card.classList.remove('unread');
+                        const dot = card.querySelector('.unread-dot');
+                        if (dot) dot.remove();
+                        this.remove();
+                    }
+                });
+        });
+    });
+</script>
+{% endblock %}

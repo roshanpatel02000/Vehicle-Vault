@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Notifications - Vehicle Vault Admin{% endblock %}
+
+{% block navbar %}
+{% include 'vehicle/admin/adminnavbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'vehicle/admin/adminsiderbar.html' %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-notif-container {
+        padding: 40px 20px !important;
+        max-width: 1000px !important;
+        margin: 0 auto !important;
+    }
+    .admin-notif-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-bottom: 30px !important;
+    }
+    .admin-notif-title {
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        color: #fff !important;
+    }
+    .btn-send-notif {
+        padding: 12px 24px !important;
+        background: #6236ff !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        text-decoration: none !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    .btn-send-notif:hover {
+        background: #4e29cc !important;
+        transform: translateY(-2px) !important;
+    }
+    .notif-table-card {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        margin-top: 20px !important;
+    }
+    .notif-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    .notif-table th {
+        background: rgba(255, 255, 255, 0.05) !important;
+        text-align: left !important;
+        padding: 16px !important;
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+    .notif-table td {
+        padding: 16px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+        color: #fff !important;
+    }
+    .notif-table tr:hover {
+        background: rgba(255, 255, 255, 0.02) !important;
+    }
+    .notif-badge {
+        padding: 4px 10px !important;
+        border-radius: 6px !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        display: inline-block !important;
+    }
+    .badge-active { background: rgba(34, 197, 94, 0.1) !important; color: #22c55e !important; border: 1px solid rgba(34, 197, 94, 0.2) !important; }
+    .badge-inactive { background: rgba(239, 68, 68, 0.1) !important; color: #ef4444 !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
+    .btn-delete {
+        color: #ef4444 !important;
+        background: transparent !important;
+        border: none !important;
+        cursor: pointer !important;
+        padding: 8px !important;
+        border-radius: 8px !important;
+        transition: all 0.2s !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .btn-delete:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+    }
+    .btn-delete svg {
+        stroke: #ef4444 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-notif-container">
+    <div class="admin-notif-header">
+        <h1 class="admin-notif-title">Manage Notifications</h1>
+        <a href="{% url 'admin_send_notification' %}" class="btn-send-notif">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Send New Notification
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 15px; border-radius: 12px; margin-bottom: 20px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #22c55e;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="notif-table-card">
+        <table class="notif-table">
+            <thead>
+                <tr>
+                    <th>Created At</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for n in notifications %}
+                <tr>
+                    <td style="font-size: 0.85rem; color: rgba(255,255,255,0.4);">{{ n.created_at|date:"M d, Y H:i" }}</td>
+                    <td style="font-weight: 700;">{{ n.title }}</td>
+                    <td>
+                        <span class="notif-badge {% if n.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {{ n.is_active|yesno:"Active,Inactive" }}
+                        </span>
+                    </td>
+                    <td>
+                        <form action="{% url 'admin_delete_notification' n.notification_id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this notification?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete" title="Delete Notification">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.3);">
+                        No notifications sent yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

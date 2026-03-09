@@ -84,6 +84,202 @@
     .vv-car-orig-price { color: #9ca3af !important; font-size: 13px !important; text-decoration: line-through !important; }
     .vv-car-btn   { color: #ff5a00 !important; align-self: flex-start !important; }
     .vv-section-title { color: #111827 !important; }
+
+    /* Find your right car card */
+    .vv-hero { 
+        justify-content: space-between !important; 
+        align-items: center !important; 
+        padding-top: 72px !important;
+        padding-left: 8% !important; 
+        padding-right: 8% !important; 
+        padding-bottom: 0 !important;
+    }
+    @media (max-width: 900px) {
+        .vv-hero { flex-direction: column !important; justify-content: center !important; gap: 40px !important; padding-top: 100px !important; padding-bottom: 60px !important;}
+        .hero-search-card { max-width: 100% !important; margin-top: 40px; }
+    }
+    .hero-search-card {
+        background: rgba(13, 15, 20, 0.35);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        width: 100%;
+        max-width: 380px;
+        padding: 32px 28px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .hsc-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 26px;
+        font-weight: 800;
+        color: #ffffff !important;
+        margin: 0 0 24px 0;
+        line-height: 1.2;
+    }
+    .hsc-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .hsc-tab {
+        flex: 1;
+        padding: 12px 16px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s;
+    }
+    .hsc-tab.active {
+        background: #25282d;
+        color: #ffffff;
+        border: 1px solid #25282d;
+    }
+    .hsc-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px 8px 0;
+        border-style: solid;
+        border-color: #25282d transparent transparent transparent;
+    }
+    .hsc-tab.inactive {
+        background: #ffffff;
+        color: #6b7280;
+        border: 1px solid #d1d5db;
+    }
+    .hsc-radio-row {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 20px;
+        align-items: center;
+    }
+    .hsc-radio {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        user-select: none;
+    }
+    .hsc-radio.active {
+        color: #f45d35;
+    }
+    .hsc-radio input {
+        display: none;
+    }
+    .hsc-custom-radio {
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid #9ca3af;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .hsc-radio.active .hsc-custom-radio {
+        border-color: #f45d35;
+    }
+    .hsc-radio.active .hsc-custom-radio::after {
+        content: '';
+        width: 10px;
+        height: 10px;
+        background: #f45d35;
+        border-radius: 50%;
+    }
+    .hsc-select-group {
+        border: 1.5px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        margin-bottom: 24px;
+        background: rgba(255,255,255,0.05);
+        display: flex;
+        flex-direction: column;
+    }
+    .hsc-select-field {
+        position: relative;
+        display: flex;
+    }
+    .hsc-select-field:first-child {
+        border-bottom: 1.5px solid rgba(255,255,255,0.1);
+    }
+    .hsc-select {
+        flex: 1;
+        width: 100%;
+        appearance: none;
+        border: none;
+        background: transparent;
+        padding: 16px 20px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        color: #ffffff;
+        outline: none;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+    .hsc-select option {
+        background: #1a1d23;
+        color: #ffffff;
+    }
+    .hsc-select-field::after {
+        content: '▼';
+        font-size: 10px;
+        color: rgba(255,255,255,0.4);
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+    .hsc-submit {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #ff5a00, #ff7b33);
+        box-shadow: 0 4px 16px rgba(255,90,0,0.3);
+        color: #ffffff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 0.02em;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.25s;
+        text-decoration: none;
+    }
+    .hsc-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(255,90,0,0.5);
+    }
+    .hsc-advanced {
+        text-align: center;
+        margin-top: 18px;
+    }
+    .hsc-advanced-link {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #ff5a00;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .hsc-advanced-link:hover {
+        color: #ff7b33;
+    }
 </style>
 {% endblock %}
 
@@ -99,10 +295,40 @@
         <h1 class="vv-hero-title">Welcome to <span class="vv-accent">Vehicle</span>Vault</h1>
         <p class="vv-hero-desc">DISCOVER THOUSANDS OF VERIFIED VEHICLES AT THE BEST PRICES.<br>BUY, SELL OR RENT — ALL IN ONE PLACE.</p>
     </div>
-    <!-- Scroll indicator -->
-    <div class="vv-scroll-hint">
-        <span class="vv-scroll-line"></span>
-        <span class="vv-scroll-text">SCROLL</span>
+    <!-- Right Side Hero Card -->
+    <div class="hero-search-card">
+        <h2 class="hsc-title">Compare Cars</h2>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;line-height:1.6;">Select any two vehicles to compare their performance, price, and features side-by-side.</p>
+
+        <form action="{% url 'compare_vehicles' %}" method="GET" style="margin: 0;">
+            <div class="hsc-select-group" style="position: relative;">
+                <div class="hsc-select-field">
+                    <select name="v1" class="hsc-select" required>
+                        <option value="">Select First Car</option>
+                        {% for v in all_vehicles %}
+                        <option value="{{ v.id }}">{{ v.brand }} {{ v.model }}{% if v.variant %} {{ v.variant }}{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: linear-gradient(135deg, #ff5a00, #ff7b33); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; border: 3px solid rgba(13,15,20,0.55); z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">VS</div>
+
+                <div class="hsc-select-field">
+                    <select name="v2" class="hsc-select" required>
+                        <option value="">Select Second Car</option>
+                        {% for v in all_vehicles %}
+                        <option value="{{ v.id }}">{{ v.brand }} {{ v.model }}{% if v.variant %} {{ v.variant }}{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="hsc-submit">Compare</button>
+        </form>
+
+        <div class="hsc-advanced">
+            <a href="{% url 'all_vehicles' %}" class="hsc-advanced-link">View all vehicles &rarr;</a>
+        </div>
     </div>
 </section>
 
@@ -128,6 +354,51 @@
         <span class="vv-stat-l">Verified Listings</span>
     </div>
 </div>
+
+<!-- ===== MOST SEARCHED CARS ===== -->
+<section class="vv-most-searched">
+    <div class="vv-container">
+        <p class="vv-section-label">TRENDING NOW</p>
+        <h2 class="vv-section-title">The most <span class="vv-accent">searched</span> cars</h2>
+        
+        <div class="vv-listings-grid">
+            {% for vehicle in most_searched_vehicles %}
+            <div class="vv-car-card">
+                <div class="vv-ms-rank-badge">#{{ forloop.counter }}</div>
+                <div class="vv-car-img" style="background:linear-gradient(135deg,#0d0f14,#1a1d23); position:relative; overflow:hidden;">
+                    {% if vehicle.image_url or vehicle.image_file %}
+                    <img src="{{ vehicle.get_display_image }}" alt="{{ vehicle.brand }} {{ vehicle.model }}"
+                         style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:1;">
+                    {% else %}
+                    <span class="vv-car-emoji"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+                    {% endif %}
+                    <span class="vv-car-badge" style="z-index:2; background:#ff5a00;">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        TRENDING
+                    </span>
+                </div>
+                <div class="vv-car-body">
+                    <span class="vv-car-tag">{{ vehicle.body_type|default:"Vehicle" }} · {{ vehicle.fuel_type }}</span>
+                    <h3 class="vv-car-name">{{ vehicle.brand }} {{ vehicle.model }}{% if vehicle.variant %} {{ vehicle.variant }}{% endif %}</h3>
+                    <div class="vv-car-specs">
+                        <span>{{ vehicle.engine }}</span><span class="vv-dot">·</span>
+                        <span>{{ vehicle.seating_capacity }} Seats</span><span class="vv-dot">·</span>
+                        <span>{{ vehicle.transmission }}</span>
+                    </div>
+                    <div class="vv-car-footer">
+                        <div class="vv-car-price-row">
+                            <span class="vv-car-price">₹{{ vehicle.get_display_price|floatformat:0 }}</span>
+                        </div>
+                        <a href="{% url 'all_vehicles' %}?q={{ vehicle.brand }}+{{ vehicle.model }}" class="vv-car-btn" style="text-decoration:none;">View Details →</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color:rgba(0,0,0,0.4);text-align:center;grid-column:1/-1;">No trending vehicles yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 
 <!-- ===== FEATURED VEHICLES ===== -->
 <section class="vv-listings">

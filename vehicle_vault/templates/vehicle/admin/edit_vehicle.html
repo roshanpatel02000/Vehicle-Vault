@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Vehicle — Vehicle Vault{% endblock %}
+
+{% block navbar %}
+{% include 'vehicle/admin/adminnavbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'vehicle/admin/adminsiderbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="av-wrapper">
+    <!-- Header -->
+    <div class="av-header">
+        <div class="dashboard-greeting">
+            <h1 class="dashboard-title">Edit Vehicle<span class="accent-dot">.</span></h1>
+            <p class="dashboard-subtitle">Update the listing for <strong>{{ vehicle.brand }} {{ vehicle.model }}</strong>.</p>
+        </div>
+        <a href="{% url 'manage_vehicles' %}" class="av-back">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Vehicles
+        </a>
+    </div>
+
+    <!-- Card -->
+    <div class="av-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="av-errors">
+                <p>Please correct the errors below:</p>
+                <ul>
+                    {% for field in form %}{% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}{% endfor %}
+                    {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- ── Basic Information ── -->
+            <div class="av-section">
+                <h3 class="av-section-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="22" height="16" rx="3"/><path d="M1 10h22"/></svg>
+                    Basic Information
+                </h3>
+                <div class="av-grid-3">
+                    <div class="av-group">
+                        <label class="av-label">Brand<span>*</span></label>
+                        <input type="text" name="brand" required class="av-input" placeholder="e.g. Maruti Suzuki" value="{{ form.brand.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Model<span>*</span></label>
+                        <input type="text" name="model" required class="av-input" placeholder="e.g. Baleno" value="{{ form.model.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Variant</label>
+                        <input type="text" name="variant" class="av-input" placeholder="e.g. Alpha CVT" value="{{ form.variant.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Body Type</label>
+                        <select name="body_type" class="av-select">
+                            <option value="">Select Body Type</option>
+                            <option value="SUV" {% if form.body_type.value == "SUV" %}selected{% endif %}>SUV</option>
+                            <option value="Sedan" {% if form.body_type.value == "Sedan" %}selected{% endif %}>Sedan</option>
+                            <option value="Hatchback" {% if form.body_type.value == "Hatchback" %}selected{% endif %}>Hatchback</option>
+                            <option value="Coupe" {% if form.body_type.value == "Coupe" %}selected{% endif %}>Coupe</option>
+                            <option value="Convertible" {% if form.body_type.value == "Convertible" %}selected{% endif %}>Convertible</option>
+                            <option value="Pickup" {% if form.body_type.value == "Pickup" %}selected{% endif %}>Pickup</option>
+                            <option value="MUV" {% if form.body_type.value == "MUV" %}selected{% endif %}>MUV</option>
+                            <option value="Crossover" {% if form.body_type.value == "Crossover" %}selected{% endif %}>Crossover</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Pricing ── -->
+            <div class="av-section">
+                <h3 class="av-section-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Pricing
+                </h3>
+                <div class="av-grid-3">
+                    <div class="av-group">
+                        <label class="av-label">Price (₹)<span>*</span></label>
+                        <input type="number" step="0.01" name="price" required class="av-input" placeholder="e.g. 1250000" value="{{ form.price.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Offer Price (₹)</label>
+                        <input type="number" step="0.01" name="offer_price" class="av-input" placeholder="e.g. 1100000" value="{{ form.offer_price.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Discount (%)</label>
+                        <input type="number" name="discount_percentage" class="av-input" placeholder="e.g. 12" value="{{ form.discount_percentage.value|default:'' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Specifications ── -->
+            <div class="av-section">
+                <h3 class="av-section-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M21 12h-2M12 21v-2M12 5V3M5 12H3"/></svg>
+                    Specifications
+                </h3>
+                <div class="av-grid-3">
+                    <div class="av-group">
+                        <label class="av-label">Fuel Type<span>*</span></label>
+                        <select name="fuel_type" required class="av-select">
+                            <option value="" disabled {% if not form.fuel_type.value %}selected{% endif %}>Select Fuel Type</option>
+                            <option value="Petrol" {% if form.fuel_type.value == "Petrol" %}selected{% endif %}>Petrol</option>
+                            <option value="Diesel" {% if form.fuel_type.value == "Diesel" %}selected{% endif %}>Diesel</option>
+                            <option value="Electric" {% if form.fuel_type.value == "Electric" %}selected{% endif %}>Electric</option>
+                            <option value="Hybrid" {% if form.fuel_type.value == "Hybrid" %}selected{% endif %}>Hybrid</option>
+                            <option value="CNG" {% if form.fuel_type.value == "CNG" %}selected{% endif %}>CNG</option>
+                        </select>
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Transmission<span>*</span></label>
+                        <select name="transmission" required class="av-select">
+                            <option value="" disabled {% if not form.transmission.value %}selected{% endif %}>Select Transmission</option>
+                            <option value="Manual" {% if form.transmission.value == "Manual" %}selected{% endif %}>Manual</option>
+                            <option value="Automatic" {% if form.transmission.value == "Automatic" %}selected{% endif %}>Automatic</option>
+                        </select>
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Engine<span>*</span></label>
+                        <input type="text" name="engine" required class="av-input" placeholder="e.g. 1.5L i-VTEC" value="{{ form.engine.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Mileage (km/l)<span>*</span></label>
+                        <input type="number" step="0.01" name="mileage" required class="av-input" placeholder="e.g. 18.5" value="{{ form.mileage.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Seating Capacity<span>*</span></label>
+                        <input type="number" name="seating_capacity" required class="av-input" placeholder="e.g. 5" value="{{ form.seating_capacity.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Color</label>
+                        <input type="text" name="color" class="av-input" placeholder="e.g. Midnight Black" value="{{ form.color.value|default:'' }}">
+                    </div>
+                    <div class="av-group">
+                        <label class="av-label">Safety Rating <span style="color:rgba(255,255,255,0.3);font-size:10px;text-transform:none;font-weight:400;">(0 – 5 stars)</span></label>
+                        <div class="av-star-picker" id="av-star-picker">
+                            {% for i in "12345" %}
+                            <button type="button" class="av-star-btn" data-val="{{ i }}">★</button>
+                            {% endfor %}
+                            <span class="av-star-val" id="av-star-val">-</span>
+                        </div>
+                        <input type="hidden" name="safety_rating" id="av-safety-rating" value="{{ form.safety_rating.value|default:'' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Description ── -->
+            <div class="av-section">
+                <h3 class="av-section-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                    Description
+                </h3>
+                <div class="av-group">
+                    <label class="av-label">Vehicle Description</label>
+                    <textarea name="description" class="av-textarea" placeholder="Briefly describe the vehicle…">{{ form.description.value|default:'' }}</textarea>
+                </div>
+            </div>
+
+            <!-- ── Media & Visibility ── -->
+            <div class="av-section">
+                <h3 class="av-section-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Media &amp; Visibility
+                </h3>
+                <div class="av-grid-2">
+                    <div class="av-group">
+                        <label class="av-label">Replace Image</label>
+                        {% if vehicle.get_display_image %}
+                        <img src="{{ vehicle.get_display_image }}" alt="Current image" class="av-img-preview">
+                        {% endif %}
+                        <label class="av-file-label" for="av-file-input">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(98,54,255,0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                            <strong>Click to replace image</strong>
+                            <span>PNG, JPG, WEBP up to 10MB</span>
+                        </label>
+                        <input type="file" name="image_file" id="av-file-input" accept="image/*">
+                        <p id="av-file-name"></p>
+                    </div>
+                    <div class="av-group" style="gap:16px;">
+                        <div class="av-group">
+                            <label class="av-label">Image URL <span style="color:rgba(255,255,255,0.3);font-size:10px;text-transform:none;font-weight:400;">(alternative)</span></label>
+                            <input type="url" name="image_url" class="av-input" placeholder="https://example.com/car.jpg" value="{{ form.image_url.value|default:'' }}">
+                        </div>
+                        <div class="av-toggle-row" onclick="document.getElementById('is_featured').click()">
+                            <input type="checkbox" name="is_featured" id="is_featured" onclick="event.stopPropagation()" {% if form.is_featured.value %}checked{% endif %}>
+                            <label for="is_featured" onclick="event.preventDefault()">
+                                Feature on Homepage
+                                <small>Show this vehicle in the featured section</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="av-submit-row">
+                <a href="{% url 'manage_vehicles' %}" class="av-btn-cancel">Cancel</a>
+                <button type="submit" class="av-btn-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Show selected filename
+    document.getElementById('av-file-input').addEventListener('change', function() {
+        const name = this.files[0] ? this.files[0].name : '';
+        document.getElementById('av-file-name').textContent = name;
+    });
+
+    // ── Interactive Star Rating ──
+    (function () {
+        const stars  = document.querySelectorAll('.av-star-btn');
+        const hidden = document.getElementById('av-safety-rating');
+        const valLbl = document.getElementById('av-star-val');
+        let selected = parseFloat(hidden.value) || 0;
+
+        function paint(upTo) {
+            stars.forEach((s, i) => {
+                s.classList.toggle('active', i < upTo);
+                s.classList.remove('hover');
+            });
+            valLbl.textContent = upTo > 0 ? upTo + '.0' : '-';
+        }
+
+        paint(selected);
+
+        stars.forEach((btn, idx) => {
+            btn.addEventListener('mouseenter', () => {
+                stars.forEach((s, i) => { s.classList.toggle('hover', i <= idx); s.classList.remove('active'); });
+                valLbl.textContent = (idx + 1) + '.0';
+            });
+            btn.addEventListener('mouseleave', () => { paint(selected); });
+            btn.addEventListener('click', () => {
+                selected = idx + 1;
+                hidden.value = selected + '.0';
+                paint(selected);
+            });
+        });
+    })();
+</script>
+{% endblock %}

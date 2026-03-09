@@ -4,14 +4,14 @@
 
         <!-- Left: Brand -->
         <a href="/" class="nav-logo">
-            <span class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+            <span class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2 L12 22 L22 2" stroke="white" stroke-width="1.5" fill="transparent"/><path d="M8 6 L12 14 L16 6" stroke="#00bfff" stroke-width="2.5" fill="transparent"/></svg></span>
             <span class="nav-logo-text">Vehicle<span class="nav-logo-accent">Vault</span></span>
         </a>
 
         <!-- Center: Nav Links -->
         <ul class="nav-links">
-            <li><a href="/" class="nav-link active">Home</a></li>
-            <li><a href="#" class="nav-link">Vehicles</a></li>
+            <li><a href="/" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+            <li><a href="{% url 'all_vehicles' %}" class="nav-link {% if request.resolver_match.url_name == 'all_vehicles' %}active{% endif %}">Vehicles</a></li>
             <li><a href="#" class="nav-link">Services</a></li>
             <li><a href="#" class="nav-link">About</a></li>
         </ul>
@@ -82,6 +82,30 @@
         <!-- Right: Auth Actions -->
         <div class="nav-actions">
             {% if user.is_authenticated %}
+            <!-- Notifications Bell -->
+            <div class="nav-notif-wrap" id="nav-notif-wrap">
+                <button class="nav-notif-btn" id="nav-notif-btn" aria-label="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    {% if unread_notifications_count > 0 %}
+                    <span class="nav-notif-badge">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </button>
+                <div class="nav-notif-dropdown" id="nav-notif-dropdown">
+                    <div class="nnd-header">
+                        <span>Notifications</span>
+                        {% if user.role == "Admin" %}
+                        <a href="{% url 'admin_manage_notifications' %}" class="nnd-view-all">View All</a>
+                        {% else %}
+                        <a href="{% url 'notification_history' %}" class="nnd-view-all">View All</a>
+                        {% endif %}
+                    </div>
+                    <div class="nnd-list" id="nnd-list">
+                        <!-- Filled by JS -->
+                        <div class="nnd-loading"><div class="nsp-spinner"></div></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="nav-user-pill">
                 <span class="nav-user-avatar">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
                 <span class="nav-user-label">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.email|truncatechars:20 }}{% endif %}</span>
@@ -129,8 +153,8 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="nav-mobile-search-input" class="nav-mobile-search-input" placeholder="Search vehicles…" autocomplete="off">
         </div>
-        <a href="/" class="nav-mobile-link">Home</a>
-        <a href="#" class="nav-mobile-link">Vehicles</a>
+        <a href="/" class="nav-mobile-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+        <a href="{% url 'all_vehicles' %}" class="nav-mobile-link {% if request.resolver_match.url_name == 'all_vehicles' %}active{% endif %}">Vehicles</a>
         <a href="#" class="nav-mobile-link">Services</a>
         <a href="#" class="nav-mobile-link">About</a>
         <div class="nav-mobile-divider"></div>
@@ -1154,3 +1178,215 @@
     });
 })();
 </script>
+
+<style>
+/* ────────────────────────────────────────────────
+   Notification Bell & Dropdown
+   ──────────────────────────────────────────────── */
+.nav-notif-wrap {
+    position: relative;
+    margin-right: 12px;
+}
+.nav-notif-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+.nav-notif-btn:hover {
+    background: rgba(98, 54, 255, 0.1);
+    border-color: rgba(98, 54, 255, 0.3);
+    color: #6236ff;
+}
+.nav-notif-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #ff5a00;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid #0d0d12;
+}
+
+.nav-notif-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 320px;
+    background: #16161e;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 16px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    display: none;
+    z-index: 10000;
+    overflow: hidden;
+    animation: nsp-fade-in 0.2s ease;
+}
+.nav-notif-dropdown.active {
+    display: block;
+}
+
+.nnd-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+}
+.nnd-view-all {
+    font-size: 0.75rem;
+    color: #6236ff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.nnd-view-all:hover {
+    text-decoration: underline;
+}
+
+.nnd-list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+.nnd-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+}
+.nnd-item:hover {
+    background: rgba(255,255,255,0.03);
+}
+.nnd-item.unread {
+    background: rgba(98, 54, 255, 0.04);
+}
+.nnd-item-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    display: block;
+}
+.nnd-item-msg {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+    display: block;
+}
+.nnd-item-time {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.3);
+    margin-top: 6px;
+    display: block;
+}
+.nnd-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+}
+.nnd-loading {
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const notifBtn = document.getElementById('nav-notif-btn');
+    const notifDropdown = document.getElementById('nav-notif-dropdown');
+    const notifList = document.getElementById('nnd-list');
+    
+    if (notifBtn) {
+        notifBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notifDropdown.classList.toggle('active');
+            
+            if (notifDropdown.classList.contains('active')) {
+                loadNotifications();
+            }
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (notifDropdown && !notifDropdown.contains(e.target) && e.target !== notifBtn) {
+            notifDropdown.classList.remove('active');
+        }
+    });
+
+    function loadNotifications() {
+        if (!notifList) return;
+        notifList.innerHTML = '<div class="nnd-loading"><div class="nsp-spinner"></div></div>';
+
+        fetch('/notifications/fetch/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.notifications.length === 0) {
+                    notifList.innerHTML = '<div class="nnd-empty">No notifications yet</div>';
+                    return;
+                }
+                
+                let html = '';
+                data.notifications.forEach(n => {
+                    html += `
+                        <a href="#" class="nnd-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
+                            <span class="nnd-item-title">${n.title}</span>
+                            <span class="nnd-item-msg">${n.message}</span>
+                            <span class="nnd-item-time">${n.created_at}</span>
+                        </a>
+                    `;
+                });
+                notifList.innerHTML = html;
+                
+                // Add click event for items
+                notifList.querySelectorAll('.nnd-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const id = this.dataset.id;
+                        if (this.classList.contains('unread')) {
+                            fetch(`/notifications/mark-as-read/${id}/`)
+                                .then(() => {
+                                    this.classList.remove('unread');
+                                    // Update badge count
+                                    const badge = document.querySelector('.nav-notif-badge');
+                                    if (badge) {
+                                        let count = parseInt(badge.textContent);
+                                        if (count > 1) {
+                                            badge.textContent = count - 1;
+                                        } else {
+                                            badge.remove();
+                                        }
+                                    }
+                                });
+                        }
+                    });
+                });
+            })
+            .catch(err => {
+                notifList.innerHTML = '<div class="nnd-empty">Failed to load notifications</div>';
+            });
+    }
+});
+</script>
+

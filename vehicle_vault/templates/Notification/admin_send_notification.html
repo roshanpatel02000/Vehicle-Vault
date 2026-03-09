@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Send Notification - Vehicle Vault Admin{% endblock %}
+
+{% block navbar %}
+{% include 'vehicle/admin/adminnavbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'vehicle/admin/adminsiderbar.html' %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .send-notif-container {
+        padding: 40px 20px !important;
+        max-width: 700px !important;
+        margin: 0 auto !important;
+    }
+    .send-notif-header {
+        margin-bottom: 30px !important;
+    }
+    .send-notif-title {
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        color: #fff !important;
+    }
+    .form-card {
+        background: #16161e !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 20px !important;
+        padding: 30px !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+    }
+    .form-group {
+        margin-bottom: 24px !important;
+    }
+    .form-label {
+        display: block !important;
+        font-size: 0.9rem !important;
+        font-weight: 700 !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+        margin-bottom: 10px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+    .btn-submit {
+        width: 100% !important;
+        padding: 16px !important;
+        background: #6236ff !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        font-size: 1rem !important;
+    }
+    .btn-submit:hover {
+        background: #4e29cc !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 20px rgba(98, 54, 255, 0.3) !important;
+    }
+    .form-check {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        color: #fff !important;
+        font-weight: 600 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="send-notif-container">
+    <div class="send-notif-header">
+        <h1 class="send-notif-title">Send Notification</h1>
+        <p style="color: rgba(255,255,255,0.4);">Create a message to broadcast to all registered users.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Notification Title</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <p style="color: #ef4444; font-size: 0.8rem; margin-top: 5px;">{{ form.title.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Message Body</label>
+                {{ form.message }}
+                {% if form.message.errors %}
+                    <p style="color: #ef4444; font-size: 0.8rem; margin-top: 5px;">{{ form.message.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <div class="form-check">
+                    {{ form.is_active }}
+                    <label for="{{ form.is_active.id_for_label }}">Active (Broadcast immediately)</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Broadcast Notification</button>
+        </form>
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="{% url 'admin_manage_notifications' %}" style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.9rem;">&larr; Back to Management</a>
+    </div>
+</div>
+{% endblock %}
