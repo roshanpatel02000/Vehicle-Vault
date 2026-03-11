@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=8" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=12" />
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     {% block navbar %}
     {% include 'navbar.html' %}
     {% endblock %}
@@ -21,7 +21,7 @@
         {% include 'sidebar.html' %}
         {% endblock %}
 
-        <main class="main-content">
+        <main class="main-content {% block main_class %}{% endblock %}">
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -67,59 +67,6 @@
     </script>
     {% endif %}
     
-    <style>
-        .vv-toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .vv-toast {
-            background: #1e1e24; /* Dark cinematic background */
-            border-left: 4px solid #4CAF50;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: #ffffff;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            min-width: 300px;
-            animation: vv-toast-in 0.3s ease forwards;
-            transition: all 0.3s ease;
-        }
-        .vv-toast-error { border-left-color: #ea3943; }
-        .vv-toast-warning { border-left-color: #f39c12; }
-        .vv-toast-info { border-left-color: #6236ff; }
-        .vv-toast-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .vv-toast-content p {
-            margin: 0;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-        .vv-toast-close {
-            background: transparent;
-            border: none;
-            color: #888;
-            font-size: 1.5rem;
-            margin-left: auto;
-            cursor: pointer;
-            line-height: 1;
-        }
-        .vv-toast-close:hover { color: #fff; }
-        @keyframes vv-toast-in {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    </style>
 
     <!-- Global Password Visibility Toggle -->
     <script>
@@ -185,3 +132,4 @@
     
 </body>
 </html>
+

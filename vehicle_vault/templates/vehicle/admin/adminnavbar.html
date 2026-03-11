@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 {% load admin_tags %}
 <nav class="site-nav" id="site-nav">
     <div class="nav-container">
@@ -95,46 +95,6 @@
     });
 </script>
 
-<style>
-/* ────────────────────────────────────────────────
-   Notification Bell & Dropdown
-   ──────────────────────────────────────────────── */
-.nav-notif-wrap { position: relative; margin-right: 12px; }
-.nav-notif-btn {
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.7); width: 38px; height: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    transition: all 0.2s; position: relative;
-}
-.nav-notif-btn:hover { background: rgba(98, 54, 255, 0.1); border-color: rgba(98, 54, 255, 0.3); color: #6236ff; }
-.nav-notif-badge {
-    position: absolute; top: -2px; right: -2px; background: #ff5a00; color: #fff;
-    font-size: 0.65rem; font-weight: 800; min-width: 16px; height: 16px;
-    border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    padding: 0 4px; border: 2px solid #0d0d12;
-}
-.nav-notif-dropdown {
-    position: absolute; top: calc(100% + 12px); right: 0; width: 320px;
-    background: #16161e; border: 1px solid rgba(255,255,255,0.09); border-radius: 16px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.7); display: none; z-index: 10000;
-    overflow: hidden; animation: nsp-fade-in 0.2s ease;
-}
-.nav-notif-dropdown.active { display: block; }
-.nnd-header { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: #fff; }
-.nnd-view-all { font-size: 0.75rem; color: #6236ff; text-decoration: none; font-weight: 600; }
-.nnd-list { max-height: 360px; overflow-y: auto; }
-.nnd-item { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); display: block; text-decoration: none; color: inherit; transition: background 0.2s; }
-.nnd-item:hover { background: rgba(255,255,255,0.03); }
-.nnd-item.unread { background: rgba(98, 54, 255, 0.04); }
-.nnd-item-title { font-size: 0.88rem; font-weight: 700; color: #fff; margin-bottom: 4px; display: block; }
-.nnd-item-msg { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.4; display: block; }
-.nnd-item-time { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 6px; display: block; }
-.nnd-empty { padding: 30px 20px; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.85rem; }
-.nnd-loading { padding: 30px; display: flex; justify-content: center; }
-@keyframes nsp-fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-.nsp-spinner { width: 24px; height: 24px; border: 2px solid rgba(98,54,255,0.1); border-top-color: #6236ff; border-radius: 50%; animation: nsp-spin 0.8s linear infinite; }
-@keyframes nsp-spin { to { transform: rotate(360deg); } }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

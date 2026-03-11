@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Manage Notifications - Vehicle Vault Admin{% endblock %}
@@ -12,98 +12,6 @@
 {% endblock %}
 
 {% block extra_css %}
-<style>
-    .admin-notif-container {
-        padding: 40px 20px !important;
-        max-width: 1000px !important;
-        margin: 0 auto !important;
-    }
-    .admin-notif-header {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 30px !important;
-    }
-    .admin-notif-title {
-        font-size: 2rem !important;
-        font-weight: 800 !important;
-        color: #fff !important;
-    }
-    .btn-send-notif {
-        padding: 12px 24px !important;
-        background: #6236ff !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 12px !important;
-        font-weight: 700 !important;
-        text-decoration: none !important;
-        transition: all 0.3s ease !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-    }
-    .btn-send-notif:hover {
-        background: #4e29cc !important;
-        transform: translateY(-2px) !important;
-    }
-    .notif-table-card {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 16px !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        margin-top: 20px !important;
-    }
-    .notif-table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-    }
-    .notif-table th {
-        background: rgba(255, 255, 255, 0.05) !important;
-        text-align: left !important;
-        padding: 16px !important;
-        font-size: 0.85rem !important;
-        font-weight: 700 !important;
-        color: rgba(255, 255, 255, 0.5) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-    }
-    .notif-table td {
-        padding: 16px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-        color: #fff !important;
-    }
-    .notif-table tr:hover {
-        background: rgba(255, 255, 255, 0.02) !important;
-    }
-    .notif-badge {
-        padding: 4px 10px !important;
-        border-radius: 6px !important;
-        font-size: 0.75rem !important;
-        font-weight: 700 !important;
-        display: inline-block !important;
-    }
-    .badge-active { background: rgba(34, 197, 94, 0.1) !important; color: #22c55e !important; border: 1px solid rgba(34, 197, 94, 0.2) !important; }
-    .badge-inactive { background: rgba(239, 68, 68, 0.1) !important; color: #ef4444 !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; }
-    .btn-delete {
-        color: #ef4444 !important;
-        background: transparent !important;
-        border: none !important;
-        cursor: pointer !important;
-        padding: 8px !important;
-        border-radius: 8px !important;
-        transition: all 0.2s !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-    .btn-delete:hover {
-        background: rgba(239, 68, 68, 0.1) !important;
-    }
-    .btn-delete svg {
-        stroke: #ef4444 !important;
-    }
-</style>
 {% endblock %}
 
 {% block content %}

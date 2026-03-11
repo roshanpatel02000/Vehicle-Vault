@@ -70,7 +70,7 @@ def _run_comparison(v1, v2):
 # ──────────────────────────────────────────────────────────────────────────────
 def homeView(request):
     featured_vehicles = Vehicle.objects.filter(is_featured=True).order_by('-created_at')
-    most_searched_vehicles = Vehicle.objects.all().order_by('-search_count')[:6]
+    most_searched_vehicles = Vehicle.objects.all().order_by('-search_count')
     all_vehicles      = Vehicle.objects.all().order_by('brand', 'model')
     vehicle_count     = Vehicle.objects.count()
     return render(request, "home.html", {

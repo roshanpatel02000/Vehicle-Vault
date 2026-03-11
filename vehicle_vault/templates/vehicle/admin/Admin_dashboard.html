@@ -1,59 +1,59 @@
-{% extends 'base.html' %}
-
-{% block title %}Admin Dashboard — Vehicle Vault{% endblock %}
-
-
-{% block navbar %}
-{% include 'vehicle/admin/adminnavbar.html' %}
-{% endblock %}
-
-{% block sidebar %}
-{% include 'vehicle/admin/adminsiderbar.html' %}
-{% endblock %}
-
-{% block content %}
-<div class="dashboard-wrapper">
-
-    <!-- Welcome Header -->
-    <div class="dashboard-header">
-        <div class="dashboard-greeting">
-            <h1 class="dashboard-title">Welcome back{% if request.user.first_name %}, {{ request.user.first_name }}{% endif %}<span class="accent-dot">.</span></h1>
-            <p class="dashboard-subtitle">{{ request.user.email }}</p>
-        </div>
-        <span class="dashboard-badge badge-admin">Admin</span>
-    </div>
-
-    <!-- Stats Row -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="stat-info">
-                <span class="stat-value">{{ total_users|default:"0" }}</span>
-                <span class="stat-label">Total Users</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
-            <div class="stat-info">
-                <span class="stat-value">{{ total_vehicles|default:"0" }}</span>
-                <span class="stat-label">Total Vehicles</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
-            <div class="stat-info">
-                <span class="stat-value">{{ total_notifications|default:"0" }}</span>
-                <span class="stat-label">Total Notifications</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-            <div class="stat-info">
-                <span class="stat-value">₹0</span>
-                <span class="stat-label">Revenue</span>
-            </div>
-        </div>
-    </div>
-
-</div>
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard ── Vehicle Vault{% endblock %}
+
+
+{% block navbar %}
+{% include 'vehicle/admin/adminnavbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'vehicle/admin/adminsiderbar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <!-- Welcome Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-greeting">
+            <h1 class="dashboard-title">Welcome back{% if request.user.first_name %}, {{ request.user.first_name }}{% endif %}<span class="accent-dot">.</span></h1>
+            <p class="dashboard-subtitle">{{ request.user.email }}</p>
+        </div>
+        <span class="dashboard-badge badge-admin">Admin</span>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_users|default:"0" }}</span>
+                <span class="stat-label">Total Users</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_vehicles|default:"0" }}</span>
+                <span class="stat-label">Total Vehicles</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_notifications|default:"0" }}</span>
+                <span class="stat-label">Total Notifications</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-info">
+                <span class="stat-value">₹0</span>
+                <span class="stat-label">Revenue</span>
+            </div>
+        </div>
+    </div>
+
+</div>
 {% endblock %}

@@ -1,21 +1,10 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Sign Up - Vehicle Vault{% endblock %}
 
 {% block sidebar %}{% endblock %}
 
 {% block content %}
-<style>
-/* Compact two-column grid for signup extra fields */
-.signup-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 16px;
-}
-.signup-grid .form-group { margin-bottom: 16px; }
-.signup-grid .span-full  { grid-column: 1 / -1; }
-@media (max-width: 480px) { .signup-grid { grid-template-columns: 1fr; } }
-</style>
 
 <div class="auth-wrapper">
     <div class="auth-card">

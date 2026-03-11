@@ -1,96 +1,9 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Notification History - Vehicle Vault{% endblock %}
 
 {% block extra_css %}
-<style>
-    .notif-history-container {
-        padding: 40px 20px !important;
-        max-width: 900px !important;
-        margin: 0 auto !important;
-    }
-    .notif-header {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        margin-bottom: 30px !important;
-    }
-    .notif-title {
-        font-size: 2rem !important;
-        font-weight: 800 !important;
-        color: #fff !important;
-    }
-    .notif-list {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 16px !important;
-    }
-    .notif-card {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 16px !important;
-        padding: 20px !important;
-        transition: all 0.3s ease !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    .notif-card:hover {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border-color: rgba(98, 54, 255, 0.3) !important;
-        transform: translateY(-2px) !important;
-    }
-    .notif-card.unread {
-        border-left: 4px solid #6236ff !important;
-        background: rgba(98, 54, 255, 0.05) !important;
-    }
-    .notif-card-header {
-        display: flex !important;
-        justify-content: space-between !important;
-        margin-bottom: 8px !important;
-    }
-    .notif-card-title {
-        font-size: 1.1rem !important;
-        font-weight: 700 !important;
-        color: #fff !important;
-    }
-    .notif-card-time {
-        font-size: 0.8rem !important;
-        color: rgba(255, 255, 255, 0.4) !important;
-    }
-    .notif-card-msg {
-        font-size: 0.95rem !important;
-        color: rgba(255, 255, 255, 0.6) !important;
-        line-height: 1.5 !important;
-    }
-    .unread-dot {
-        width: 8px !important;
-        height: 8px !important;
-        background: #6236ff !important;
-        border-radius: 50% !important;
-        display: inline-block !important;
-        margin-right: 8px !important;
-    }
-    .pagination {
-        margin-top: 40px !important;
-        display: flex !important;
-        justify-content: center !important;
-        gap: 10px !important;
-    }
-    .page-link {
-        padding: 8px 16px !important;
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #fff !important;
-        border-radius: 8px !important;
-        text-decoration: none !important;
-        transition: all 0.2s !important;
-    }
-    .page-link:hover, .page-link.active {
-        background: #6236ff !important;
-        border-color: #6236ff !important;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
