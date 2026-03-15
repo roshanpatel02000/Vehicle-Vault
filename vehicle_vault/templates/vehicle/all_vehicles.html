@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% load static %}
 
@@ -18,7 +18,35 @@
 
 
 
+
 {% block content %}
+<style>
+    /* Compact Overrides - Inventory Unified Style */
+    .av-hero { padding: 35px 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .av-hero h1 { font-size: clamp(1.4rem, 3.5vw, 2.2rem); }
+    .av-hero-eyebrow { padding: 3px 10px; font-size: 0.65rem; margin-bottom: 12px; }
+    .av-hero-sub { font-size: 0.85rem; opacity: 0.7; }
+    
+    .av-filter-bar { padding: 8px 24px; }
+    .av-filter-inner { gap: 10px; }
+    .av-search-box, .av-select { padding: 8px 14px; border-radius: 10px; font-size: 0.8rem; }
+    
+    .av-grid-section { padding: 30px 24px 80px; }
+    .av-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    
+    .av-card { border-radius: 16px; }
+    .av-card-img-wrap { height: 160px; }
+    .av-card-body { padding: 14px; }
+    .av-card-name { font-size: 0.95rem; min-height: 2.4em; }
+    .av-card-brand { font-size: 0.65rem; }
+    .av-card-specs { margin-bottom: 12px; gap: 6px; }
+    .av-spec-chip { font-size: 0.65rem; padding: 2px 6px; }
+    
+    .av-card-footer { padding-top: 10px; min-height: 50px; }
+    .av-offer-price, .av-main-price { font-size: 1rem; }
+    .av-orig-price { font-size: 0.68rem; }
+    .vv-details-btn { padding: 6px 12px; font-size: 0.75rem; border-radius: 40px; }
+</style>
 
 
 

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'vehicle',
     'Notification',
+    'accessory',
 ]
 
 MIDDLEWARE = [

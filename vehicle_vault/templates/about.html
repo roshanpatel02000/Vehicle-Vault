@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us ── Vehicle Vault{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block content %}
+<style>
+    .about-hero {
+        padding: 100px 24px;
+        text-align: center;
+        background: radial-gradient(circle at center, rgba(255, 90, 0, 0.05) 0%, transparent 70%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .about-eyebrow {
+        display: inline-block;
+        padding: 6px 16px;
+        background: rgba(255, 90, 0, 0.1);
+        color: #ff5a00;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        border-radius: 100px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(4px);
+    }
+    
+    .about-hero h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 24px;
+    }
+    
+    .about-hero h1 span {
+        background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.4));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .about-hero-sub {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.6);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .about-section {
+        padding: 80px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+    }
+
+    .about-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+        padding: 40px;
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .about-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 90, 0, 0.3);
+    }
+
+    .about-card h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .about-card h2 svg {
+        color: #ff5a00;
+    }
+
+    .about-card p {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.7;
+    }
+
+    .stats-section {
+        background: rgba(255, 255, 255, 0.01);
+        padding: 60px 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .stat-item h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ff5a00;
+        margin-bottom: 5px;
+    }
+
+    .stat-item p {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 700;
+    }
+</style>
+
+<div class="about-hero">
+    <div class="about-eyebrow">The Vault Experience</div>
+    <h1>Driving the <span>Future</span></h1>
+    <p class="about-hero-sub">
+        Vehicle Vault is more than just an inventory. It's a premium ecosystem designed for automotive enthusiasts who demand excellence in every detail.
+    </p>
+</div>
+
+<div class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <h3>500+</h3>
+            <p>Premium Vehicles</p>
+        </div>
+        <div class="stat-item">
+            <h3>15k+</h3>
+            <p>Happy Clients</p>
+        </div>
+        <div class="stat-item">
+            <h3>24/7</h3>
+            <p>Expert Support</p>
+        </div>
+        <div class="stat-item">
+            <h3>100%</h3>
+            <p>Transparency</p>
+        </div>
+    </div>
+</div>
+
+<div class="about-section">
+    <div class="about-grid">
+        <div class="about-card">
+            <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                Our Mission
+            </h2>
+            <p>
+                To redefine the digital automotive landscape by providing a seamless, transparent, and aesthetically superior platform for vehicle discovery and acquisition. We believe that buying a car should be as exhilarating as driving one.
+            </p>
+        </div>
+        
+        <div class="about-card">
+            <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                The Standard
+            </h2>
+            <p>
+                At Vehicle Vault, "premium" isn't a buzzword; it's our baseline. From our hand-picked inventory to our cinematic user interface, every aspect of our platform is crafted to meet the highest standards of the automotive world.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Our Community
+            </h2>
+            <p>
+                We are built for enthusiasts, by enthusiasts. Whether you're looking for your first sedan or adding a masterpiece to your collection, and our goal is to provide the tools and expertise to make your journey extraordinary.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h2>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Innovation
+            </h2>
+            <p>
+                Leveraging the latest in web technology and data science, and we provide real-time comparisons, dynamic accessory suggestions, and a personalized dashboard to keep you ahead of the curve.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

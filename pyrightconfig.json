@@ -1,0 +1,18 @@
+{
+    "venvPath": "r:\\VEHICLE_VAULT",
+    "venv": "venv",
+    "include": [
+        "vehicle_vault"
+    ],
+    "executionEnvironments": [
+        {
+            "root": "vehicle_vault",
+            "extraPaths": [
+                "."
+            ]
+        }
+    ],
+    "reportMissingImports": true,
+    "pythonVersion": "3.13",
+    "typeCheckingMode": "basic"
+}

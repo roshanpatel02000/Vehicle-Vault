@@ -1,598 +1,1194 @@
-﻿{% load static %}
-<nav class="site-nav" id="site-nav">
-    <div class="nav-container">
-
-        <!-- Left: Brand -->
-        <a href="/" class="nav-logo">
-            <span class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2 L12 22 L22 2" stroke="white" stroke-width="1.5" fill="transparent"/><path d="M8 6 L12 14 L16 6" stroke="#00bfff" stroke-width="2.5" fill="transparent"/></svg></span>
-            <span class="nav-logo-text">Vehicle<span class="nav-logo-accent">Vault</span></span>
-        </a>
-
-        <!-- Center: Nav Links -->
-        <ul class="nav-links">
-            <li><a href="/" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
-            <li><a href="{% url 'all_vehicles' %}" class="nav-link {% if request.resolver_match.url_name == 'all_vehicles' %}active{% endif %}">Vehicles</a></li>
-            <li><a href="#" class="nav-link">Services</a></li>
-            <li><a href="#" class="nav-link">About</a></li>
-        </ul>
-
-        <!-- Search Bar -->
-        <div class="nav-search-wrap" id="nav-search-wrap">
-            <div class="nav-search-box">
-                <svg class="nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input
-                    type="text"
-                    id="nav-search-input"
-                    class="nav-search-input"
-                    placeholder="Search brand, model, fuel type…"
-                    autocomplete="off"
-                    aria-label="Search vehicles"
-                >
-                <button class="nav-search-clear" id="nav-search-clear" aria-label="Clear search">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-            </div>
-
-            <!-- Search Popup -->
-            <div class="nav-search-popup" id="nav-search-popup">
-                <!-- Filter Chips -->
-                <div class="nsp-filters">
-                    <span class="nsp-filter-label">Fuel:</span>
-                    <button class="nsp-chip" data-fuel="Petrol">Petrol</button>
-                    <button class="nsp-chip" data-fuel="Diesel">Diesel</button>
-                    <button class="nsp-chip" data-fuel="Electric">Electric</button>
-                    <button class="nsp-chip" data-fuel="Hybrid">Hybrid</button>
-                    <button class="nsp-chip" data-fuel="CNG">CNG</button>
-                </div>
-
-                <!-- Price Range -->
-                <div class="nsp-price-row">
-                    <span class="nsp-filter-label">Price (₹L):</span>
-                    <input type="number" id="nsp-min-price" class="nsp-price-input" placeholder="Min L" min="0" step="0.5">
-                    <span class="nsp-price-sep">──</span>
-                    <input type="number" id="nsp-max-price" class="nsp-price-input" placeholder="Max L" min="0" step="0.5">
-                </div>
-
-                <div class="nsp-divider"></div>
-
-                <!-- Loading -->
-                <div class="nsp-loading" id="nsp-loading">
-                    <div class="nsp-spinner"></div>
-                    <span>Searching…</span>
-                </div>
-
-                <!-- Results -->
-                <div class="nsp-results" id="nsp-results"></div>
-
-                <!-- Empty State -->
-                <div class="nsp-empty" id="nsp-empty">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <p>No vehicles found</p>
-                    <small>Try a different name or adjust filters</small>
-                </div>
-
-                <!-- Hint (initial state) -->
-                <div class="nsp-hint" id="nsp-hint">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <span>Type to search all vehicles by brand, model, or fuel type</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right: Auth Actions -->
-        <div class="nav-actions">
-            {% if user.is_authenticated %}
-            <!-- Notifications Bell -->
-            <div class="nav-notif-wrap" id="nav-notif-wrap">
-                <button class="nav-notif-btn" id="nav-notif-btn" aria-label="Notifications">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                    {% if unread_notifications_count > 0 %}
-                    <span class="nav-notif-badge">{{ unread_notifications_count }}</span>
-                    {% endif %}
-                </button>
-                <div class="nav-notif-dropdown" id="nav-notif-dropdown">
-                    <div class="nnd-header">
-                        <span>Notifications</span>
-                        {% if user.role == "Admin" %}
-                        <a href="{% url 'admin_manage_notifications' %}" class="nnd-view-all">View All</a>
-                        {% else %}
-                        <a href="{% url 'notification_history' %}" class="nnd-view-all">View All</a>
-                        {% endif %}
-                    </div>
-                    <div class="nnd-list" id="nnd-list">
-                        <!-- Filled by JS -->
-                        <div class="nnd-loading"><div class="nsp-spinner"></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-user-pill">
-                <span class="nav-user-avatar">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
-                <span class="nav-user-label">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.email|truncatechars:20 }}{% endif %}</span>
-                <span class="nav-arrow">▾</span>
-                <div class="nav-dropdown-menu">
-                    <div class="nav-dropdown-header">
-                        <span class="nd-avatar">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
-                        <div>
-                            <p class="nd-name">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}My Account{% endif %}</p>
-                            <p class="nd-email">{{ user.email }}</p>
-                        </div>
-                    </div>
-                    <div class="nd-divider"></div>
-                    {% if user.role == "Admin" %}
-                    <a href="{% url 'admin_dashboard' %}" class="nd-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</a>
-                    {% else %}
-                    <a href="{% url 'user_dashboard' %}" class="nd-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
-                    {% endif %}
-                    <a href="{% url 'profile_settings' %}" class="nd-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</a>
-
-                    <div class="nd-divider"></div>
-                    <a href="{% url 'logout' %}" class="nd-item nd-logout"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</a>
-                </div>
-            </div>
-            {% else %}
-            <a href="{% url 'login' %}" class="nav-btn-ghost">Login</a>
-            <a href="{% url 'signup' %}" class="nav-btn-cta">
-                <span>Get Started</span>
-                <span class="nav-btn-arrow">→</span>
-            </a>
-            {% endif %}
-        </div>
-
-        <!-- Mobile Hamburger -->
-        <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
-            <span></span><span></span><span></span>
-        </button>
-
-    </div>
-
-    <!-- Mobile Menu -->
-    <div class="nav-mobile-menu" id="nav-mobile-menu">
-        <!-- Mobile Search -->
-        <div class="nav-mobile-search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="nav-mobile-search-input" class="nav-mobile-search-input" placeholder="Search vehicles…" autocomplete="off">
-        </div>
-        <a href="/" class="nav-mobile-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
-        <a href="{% url 'all_vehicles' %}" class="nav-mobile-link {% if request.resolver_match.url_name == 'all_vehicles' %}active{% endif %}">Vehicles</a>
-        <a href="#" class="nav-mobile-link">Services</a>
-        <a href="#" class="nav-mobile-link">About</a>
-        <div class="nav-mobile-divider"></div>
-        {% if user.is_authenticated %}
-        {% if user.role == "Admin" %}
-        <a href="{% url 'admin_dashboard' %}" class="nav-mobile-link">Dashboard</a>
-        {% else %}
-        <a href="{% url 'user_dashboard' %}" class="nav-mobile-link">Dashboard</a>
-        {% endif %}
-        <a href="{% url 'logout' %}" class="nav-mobile-link nav-mobile-logout">Sign Out</a>
-        {% else %}
-        <a href="{% url 'login' %}" class="nav-mobile-link">Login</a>
-        <a href="{% url 'signup' %}" class="nav-mobile-link nav-mobile-cta">Get Started</a>
-        {% endif %}
-        <!-- Mobile Results -->
-        <div id="nsp-mobile-results" class="nsp-mobile-results"></div>
-    </div>
-</nav>
-
-<!-- ═══════════════════════════════════════════════════════
-     Vehicle Detail Modal (outside <nav> so z-index is fine)
-═══════════════════════════════════════════════════════ -->
-<div id="vd-overlay" class="vd-overlay" role="dialog" aria-modal="true" aria-label="Vehicle Detail">
-    <div class="vd-modal">
-        <!-- Close button -->
-        <button class="vd-close" id="vd-close" aria-label="Close">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-
-        <!-- Loading state -->
-        <div class="vd-loading" id="vd-modal-loading">
-            <div class="vd-spinner"></div>
-            <p>Loading vehicle details…</p>
-        </div>
-
-        <!-- Content (filled by JS) -->
-        <div class="vd-content" id="vd-modal-content" style="display:none;">
-            <!-- Hero image area -->
-            <div class="vd-hero" id="vd-hero">
-                <img id="vd-img" src="" alt="" class="vd-hero-img">
-                <div class="vd-hero-overlay"></div>
-                <div class="vd-hero-badges" id="vd-hero-badges"></div>
-            </div>
-
-            <!-- Body -->
-            <div class="vd-body">
-                <!-- Title row -->
-                <div class="vd-title-row">
-                    <div>
-                        <h2 class="vd-name" id="vd-name"></h2>
-                        <p class="vd-variant" id="vd-variant"></p>
-                    </div>
-                    <div class="vd-price-block" id="vd-price-block"></div>
-                </div>
-
-                <!-- Description -->
-                <p class="vd-description" id="vd-description"></p>
-
-                <!-- Specs grid -->
-                <div class="vd-specs-title">Specifications</div>
-                <div class="vd-specs" id="vd-specs"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<script>
-(function() {
-    const searchInput   = document.getElementById('nav-search-input');
-    const clearBtn      = document.getElementById('nav-search-clear');
-    const popup         = document.getElementById('nav-search-popup');
-    const loading       = document.getElementById('nsp-loading');
-    const results       = document.getElementById('nsp-results');
-    const empty         = document.getElementById('nsp-empty');
-    const hint          = document.getElementById('nsp-hint');
-    const chips         = document.querySelectorAll('.nsp-chip');
-    const minPriceInput = document.getElementById('nsp-min-price');
-    const maxPriceInput = document.getElementById('nsp-max-price');
-    const mobileInput   = document.getElementById('nav-mobile-search-input');
-    const mobileResults = document.getElementById('nsp-mobile-results');
-
-    let debounceTimer = null;
-    let activeFuel = '';
-
-    function formatPrice(val) {
-        const n = parseFloat(val);
-        if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
-        if (n >= 100000)   return '₹' + (n / 100000).toFixed(1) + ' L';
-        return '₹' + n.toLocaleString('en-IN');
-    }
-
-    function fuelClass(fuel) {
-        const map = { Petrol: 'nsp-fuel-petrol', Diesel: 'nsp-fuel-diesel', Electric: 'nsp-fuel-electric', Hybrid: 'nsp-fuel-hybrid', CNG: 'nsp-fuel-cng' };
-        return map[fuel] || 'nsp-fuel-petrol';
-    }
-
-    function buildCard(v) {
-        const name = v.brand + ' ' + v.model + (v.variant ? ' ' + v.variant : '');
-        const imgHtml = v.image
-            ? `<div class="nsp-card-img"><img src="${v.image}" alt="${name}" loading="lazy" onerror="this.parentElement.className='nsp-card-img-placeholder'; this.remove();"></div>`
-            : `<div class="nsp-card-img-placeholder"></div>`;
-        const priceHtml = v.offer_price
-            ? `<div class="nsp-card-price"><div class="price-offer">${formatPrice(v.offer_price)}</div><div class="price-orig">${formatPrice(v.price)}</div></div>`
-            : `<div class="nsp-card-price"><div class="price-main">${formatPrice(v.price)}</div></div>`;
-        const featuredBadge = v.is_featured ? `<span class="nsp-featured-badge">Featured</span>` : '';
-        const card = document.createElement('div');
-        card.className = 'nsp-card';
-        card.setAttribute('data-vehicle-id', v.id);
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.style.cursor = 'pointer';
-        card.innerHTML = `
-            ${imgHtml}
-            <div class="nsp-card-info">
-                <p class="nsp-card-name">${name}</p>
-                <div class="nsp-card-meta">
-                    <span class="nsp-fuel-badge ${fuelClass(v.fuel_type)}">${v.fuel_type}</span>
-                    ${v.body_type ? `<span>${v.body_type}</span>` : ''}
-                    ${featuredBadge}
-                </div>
-            </div>
-            ${priceHtml}
-            <span class="nsp-card-arrow">›</span>
-        `;
-        card.addEventListener('click', () => openVehicleModal(v.id));
-        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openVehicleModal(v.id); });
-        return card;
-    }
-
-    /* ── Vehicle Detail Modal ─────────────────────────────────── */
-    const vdOverlay  = document.getElementById('vd-overlay');
-    const vdClose    = document.getElementById('vd-close');
-    const vdLoading  = document.getElementById('vd-modal-loading');
-    const vdContent  = document.getElementById('vd-modal-content');
-
-    function fuelClassModal(fuel) {
-        const map = { Petrol:'nsp-fuel-petrol', Diesel:'nsp-fuel-diesel', Electric:'nsp-fuel-electric', Hybrid:'nsp-fuel-hybrid', CNG:'nsp-fuel-cng' };
-        return map[fuel] || 'nsp-fuel-petrol';
-    }
-
-    function openVehicleModal(id) {
-        // Show overlay + loading
-        vdOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        vdLoading.style.display = 'flex';
-        vdContent.style.display = 'none';
-
-        fetch(`/vehicle/${id}/detail/`)
-            .then(r => r.json())
-            .then(v => {
-                const fullName = v.brand + ' ' + v.model + (v.variant ? ' ' + v.variant : '');
-
-                // Hero image
-                const img = document.getElementById('vd-img');
-                if (v.image) {
-                    img.src = v.image;
-                    img.alt = fullName;
-                    document.getElementById('vd-hero').style.display = 'block';
-                } else {
-                    document.getElementById('vd-hero').style.display = 'none';
-                }
-
-                // Badges
-                const badges = document.getElementById('vd-hero-badges');
-                badges.innerHTML = '';
-                if (v.is_featured) badges.innerHTML += `<span class="vd-badge vd-badge-featured">Featured</span>`;
-                badges.innerHTML += `<span class="vd-badge nsp-fuel-badge ${fuelClassModal(v.fuel_type)}">${v.fuel_type}</span>`;
-                if (v.body_type) badges.innerHTML += `<span class="vd-badge vd-badge-body">${v.body_type}</span>`;
-
-                // Title
-                document.getElementById('vd-name').textContent = v.brand + ' ' + v.model;
-                const variantEl = document.getElementById('vd-variant');
-                variantEl.textContent = v.variant ? v.variant : '';
-                variantEl.style.display = v.variant ? 'block' : 'none';
-
-                // Price
-                const priceBlock = document.getElementById('vd-price-block');
-                if (v.offer_price) {
-                    const disc = v.discount_percentage ? `<span class="vd-discount">${v.discount_percentage}% OFF</span>` : '';
-                    priceBlock.innerHTML = `
-                        ${disc}
-                        <div class="vd-price-offer">${formatPrice(v.offer_price)}</div>
-                        <div class="vd-price-orig">${formatPrice(v.price)}</div>`;
-                } else {
-                    priceBlock.innerHTML = `<div class="vd-price-main">${formatPrice(v.price)}</div>`;
-                }
-
-                // Description
-                const descEl = document.getElementById('vd-description');
-                descEl.textContent = v.description || '';
-                descEl.style.display = v.description ? 'block' : 'none';
-
-                // Specs
-                const specs = [
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s1-4 9-4 9 4 9 4"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/><path d="M5 13V7l3-4h8l3 4v6"/></svg>', label: 'Fuel Type',    value: v.fuel_type },
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M21 12h-2M12 21v-2M12 5V3M5 12H3"/></svg>', label: 'Transmission', value: v.transmission },
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', label: 'Engine',       value: v.engine },
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', label: 'Mileage',      value: parseFloat(v.mileage) > 0 ? v.mileage + ' km/l' : 'EV / N/A' },
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', label: 'Seating',      value: v.seating_capacity + ' Seats' },
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="22" height="16" rx="3"/><path d="M1 10h22"/></svg>', label: 'Body Type',    value: v.body_type || '──' },
-                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>', label: 'Color',        value: v.color || '──' },
-                ];
-                const specsEl = document.getElementById('vd-specs');
-                specsEl.innerHTML = specs.map(s => `
-                    <div class="vd-spec-item">
-                        <span class="vd-spec-icon">${s.svg}</span>
-                        <div>
-                            <div class="vd-spec-label">${s.label}</div>
-                            <div class="vd-spec-value">${s.value}</div>
-                        </div>
-                    </div>`).join('');
-
-                // Show content
-                vdLoading.style.display = 'none';
-                vdContent.style.display = 'block';
-            })
-            .catch(() => {
-                vdLoading.innerHTML = '<p style="color:#ea3943">Failed to load vehicle details.</p>';
-            });
-    }
-
-    function closeVehicleModal() {
-        vdOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    vdClose.addEventListener('click', closeVehicleModal);
-    vdOverlay.addEventListener('click', e => {
-        if (e.target === vdOverlay) closeVehicleModal();
-    });
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeVehicleModal();
-    });
-
-    function setState(state) {
-        loading.classList.remove('active');
-        empty.classList.remove('active');
-        results.innerHTML = '';
-        hint.style.display = 'none';
-        if (state === 'loading') loading.classList.add('active');
-        else if (state === 'empty') empty.classList.add('active');
-        else if (state === 'hint') hint.style.display = 'flex';
-    }
-
-    function doSearch(query, isDesktop) {
-        const targetResults = isDesktop ? results : mobileResults;
-
-        if (!query && !activeFuel && !minPriceInput.value && !maxPriceInput.value) {
-            if (isDesktop) { setState('hint'); }
-            else { targetResults.innerHTML = ''; }
-            return;
-        }
-
-        if (isDesktop) setState('loading');
-
-        const params = new URLSearchParams();
-        if (query) params.set('q', query);
-        if (activeFuel) params.set('fuel_type', activeFuel);
-        // Convert Lakhs → full rupees for the backend (DB stores full rupees)
-        if (minPriceInput.value) params.set('min_price', Math.round(parseFloat(minPriceInput.value) * 100000));
-        if (maxPriceInput.value) params.set('max_price', Math.round(parseFloat(maxPriceInput.value) * 100000));
-
-        fetch('/search/?' + params.toString())
-            .then(r => r.json())
-            .then(data => {
-                if (isDesktop) loading.classList.remove('active');
-                targetResults.innerHTML = '';
-                if (!data.results || data.results.length === 0) {
-                    if (isDesktop) setState('empty');
-                    else targetResults.innerHTML = '<p style="color:rgba(255,255,255,0.35);font-size:0.82rem;padding:8px 0;">No vehicles found</p>';
-                    return;
-                }
-                data.results.forEach(v => {
-                    targetResults.appendChild(buildCard(v, true));
-                });
-                if (isDesktop && results.innerHTML) empty.classList.remove('active');
-            })
-            .catch(() => {
-                if (isDesktop) setState('empty');
-            });
-    }
-
-    function triggerSearch(isDesktop) {
-        const q = isDesktop ? searchInput.value.trim() : mobileInput.value.trim();
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => doSearch(q, isDesktop), 300);
-    }
-
-    // Desktop search input
-    searchInput.addEventListener('input', function() {
-        clearBtn.classList.toggle('visible', this.value.length > 0);
-        popup.classList.add('active');
-        triggerSearch(true);
-    });
-
-    searchInput.addEventListener('focus', function() {
-        popup.classList.add('active');
-        if (!this.value && !activeFuel) setState('hint');
-    });
-
-    // Clear button
-    clearBtn.addEventListener('click', function() {
-        searchInput.value = '';
-        clearBtn.classList.remove('visible');
-        chips.forEach(c => c.classList.remove('active'));
-        activeFuel = '';
-        minPriceInput.value = '';
-        maxPriceInput.value = '';
-        setState('hint');
-        searchInput.focus();
-    });
-
-    // Fuel chips
-    chips.forEach(chip => {
-        chip.addEventListener('click', function() {
-            if (this.classList.contains('active')) {
-                this.classList.remove('active');
-                activeFuel = '';
-            } else {
-                chips.forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                activeFuel = this.dataset.fuel;
-            }
-            triggerSearch(true);
-        });
-    });
-
-    // Price range inputs
-    [minPriceInput, maxPriceInput].forEach(inp => {
-        inp.addEventListener('input', () => triggerSearch(true));
-    });
-
-    // Mobile search
-    mobileInput.addEventListener('input', function() {
-        triggerSearch(false);
-    });
-
-    // Close popup on outside click
-    document.addEventListener('click', function(e) {
-        const wrap = document.getElementById('nav-search-wrap');
-        if (wrap && !wrap.contains(e.target)) {
-            popup.classList.remove('active');
-        }
-    });
-
-    // Navbar scroll logic
-    const nav = document.getElementById('site-nav');
-    window.addEventListener('scroll', () => {
-        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
-    });
-
-    // Mobile menu toggle
-    const hamburger = document.getElementById('nav-hamburger');
-    const mobileMenu = document.getElementById('nav-mobile-menu');
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('open');
-        mobileMenu.classList.toggle('open');
-    });
-})();
-</script>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const notifBtn = document.getElementById('nav-notif-btn');
-    const notifDropdown = document.getElementById('nav-notif-dropdown');
-    const notifList = document.getElementById('nnd-list');
-    
-    if (notifBtn) {
-        notifBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            notifDropdown.classList.toggle('active');
-            
-            if (notifDropdown.classList.contains('active')) {
-                loadNotifications();
-            }
-        });
-    }
-
-    document.addEventListener('click', function(e) {
-        if (notifDropdown && !notifDropdown.contains(e.target) && e.target !== notifBtn) {
-            notifDropdown.classList.remove('active');
-        }
-    });
-
-    function loadNotifications() {
-        if (!notifList) return;
-        notifList.innerHTML = '<div class="nnd-loading"><div class="nsp-spinner"></div></div>';
-
-        fetch('/notifications/fetch/')
-            .then(response => response.json())
-            .then(data => {
-                if (data.notifications.length === 0) {
-                    notifList.innerHTML = '<div class="nnd-empty">No notifications yet</div>';
-                    return;
-                }
-                
-                let html = '';
-                data.notifications.forEach(n => {
-                    html += `
-                        <a href="#" class="nnd-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
-                            <span class="nnd-item-title">${n.title}</span>
-                            <span class="nnd-item-msg">${n.message}</span>
-                            <span class="nnd-item-time">${n.created_at}</span>
-                        </a>
-                    `;
-                });
-                notifList.innerHTML = html;
-                
-                // Add click event for items
-                notifList.querySelectorAll('.nnd-item').forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const id = this.dataset.id;
-                        if (this.classList.contains('unread')) {
-                            fetch(`/notifications/mark-as-read/${id}/`)
-                                .then(() => {
-                                    this.classList.remove('unread');
-                                    // Update badge count
-                                    const badge = document.querySelector('.nav-notif-badge');
-                                    if (badge) {
-                                        let count = parseInt(badge.textContent);
-                                        if (count > 1) {
-                                            badge.textContent = count - 1;
-                                        } else {
-                                            badge.remove();
-                                        }
-                                    }
-                                });
-                        }
-                    });
-                });
-            })
-            .catch(err => {
-                notifList.innerHTML = '<div class="nnd-empty">Failed to load notifications</div>';
-            });
-    }
-});
-</script>
-
+{% load static %}
+
+<nav class="site-nav" id="site-nav">
+
+    <div class="nav-container">
+
+
+
+        <!-- Left: Brand -->
+
+        <a href="/" class="nav-logo">
+
+            <span class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2 L12 22 L22 2" stroke="white" stroke-width="1.5" fill="transparent"/><path d="M8 6 L12 14 L16 6" stroke="#00bfff" stroke-width="2.5" fill="transparent"/></svg></span>
+
+            <span class="nav-logo-text">Vehicle<span class="nav-logo-accent">Vault</span></span>
+
+        </a>
+
+
+
+        <!-- Center: Nav Links -->
+
+        <ul class="nav-links">
+
+            <li><a href="/" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+
+
+            <li><a href="{% url 'services' %}" class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a></li>
+
+            <li><a href="{% url 'about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a></li>
+
+        </ul>
+
+
+
+        <!-- Search Bar -->
+
+        <div class="nav-search-wrap" id="nav-search-wrap">
+
+            <div class="nav-search-box">
+
+                <svg class="nav-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
+                <input
+
+                    type="text"
+
+                    id="nav-search-input"
+
+                    class="nav-search-input"
+
+                    placeholder="Search brand, model, fuel type…"
+
+                    autocomplete="off"
+
+                    aria-label="Search vehicles"
+
+                >
+
+                <button class="nav-search-clear" id="nav-search-clear" aria-label="Clear search">
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+
+                </button>
+
+            </div>
+
+
+
+            <!-- Search Popup -->
+
+            <div class="nav-search-popup" id="nav-search-popup">
+
+                <!-- Filter Chips -->
+
+                <div class="nsp-filters">
+
+                    <span class="nsp-filter-label">Fuel:</span>
+
+                    <button class="nsp-chip" data-fuel="Petrol">Petrol</button>
+
+                    <button class="nsp-chip" data-fuel="Diesel">Diesel</button>
+
+                    <button class="nsp-chip" data-fuel="Electric">Electric</button>
+
+                    <button class="nsp-chip" data-fuel="Hybrid">Hybrid</button>
+
+                    <button class="nsp-chip" data-fuel="CNG">CNG</button>
+
+                </div>
+
+
+
+                <!-- Price Range -->
+
+                <div class="nsp-price-row">
+
+                    <span class="nsp-filter-label">Price (₹L):</span>
+
+                    <input type="number" id="nsp-min-price" class="nsp-price-input" placeholder="Min L" min="0" step="0.5">
+
+                    <span class="nsp-price-sep">──</span>
+
+                    <input type="number" id="nsp-max-price" class="nsp-price-input" placeholder="Max L" min="0" step="0.5">
+
+                </div>
+
+
+
+                <div class="nsp-divider"></div>
+
+
+
+                <!-- Loading -->
+
+                <div class="nsp-loading" id="nsp-loading">
+
+                    <div class="nsp-spinner"></div>
+
+                    <span>Searching…</span>
+
+                </div>
+
+
+
+                <!-- Results -->
+
+                <div class="nsp-results" id="nsp-results"></div>
+
+
+
+                <!-- Empty State -->
+
+                <div class="nsp-empty" id="nsp-empty">
+
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
+                    <p>No vehicles found</p>
+
+                    <small>Try a different name or adjust filters</small>
+
+                </div>
+
+
+
+                <!-- Hint (initial state) -->
+
+                <div class="nsp-hint" id="nsp-hint">
+
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
+                    <span>Type to search all vehicles by brand, model, or fuel type</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Right: Auth Actions -->
+
+        <div class="nav-actions">
+
+            {% if user.is_authenticated %}
+
+            <!-- Notifications Bell -->
+
+            <div class="nav-notif-wrap" id="nav-notif-wrap">
+
+                <button class="nav-notif-btn" id="nav-notif-btn" aria-label="Notifications">
+
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+
+                    {% if unread_notifications_count > 0 %}
+
+                    <span class="nav-notif-badge">{{ unread_notifications_count }}</span>
+
+                    {% endif %}
+
+                </button>
+
+                <div class="nav-notif-dropdown" id="nav-notif-dropdown">
+
+                    <div class="nnd-header">
+
+                        <span>Notifications</span>
+
+                        {% if user.role == "Admin" %}
+
+                        <a href="{% url 'admin_manage_notifications' %}" class="nnd-view-all">View All</a>
+
+                        {% else %}
+
+                        <a href="{% url 'notification_history' %}" class="nnd-view-all">View All</a>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="nnd-list" id="nnd-list">
+
+                        <!-- Filled by JS -->
+
+                        <div class="nnd-loading"><div class="nsp-spinner"></div></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="nav-user-pill">
+
+                <span class="nav-user-avatar">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
+
+                <span class="nav-user-label">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.email|truncatechars:20 }}{% endif %}</span>
+
+                <span class="nav-arrow">▾</span>
+
+                <div class="nav-dropdown-menu">
+
+                    <div class="nav-dropdown-header">
+
+                        <span class="nd-avatar">{% if user.first_name %}{{ user.first_name|first|upper }}{% else %}{{ user.email|first|upper }}{% endif %}</span>
+
+                        <div>
+
+                            <p class="nd-name">{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}My Account{% endif %}</p>
+
+                            <p class="nd-email">{{ user.email }}</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="nd-divider"></div>
+
+                    {% if user.role == "Admin" %}
+
+                    <a href="{% url 'admin_dashboard' %}" class="nd-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</a>
+
+                    {% else %}
+
+                    <a href="{% url 'user_dashboard' %}" class="nd-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Dashboard</a>
+
+                    {% endif %}
+
+                    <a href="{% url 'profile_settings' %}" class="nd-item"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</a>
+
+
+
+                    <div class="nd-divider"></div>
+
+                    <a href="{% url 'logout' %}" class="nd-item nd-logout"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</a>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <a href="{% url 'login' %}" class="nav-btn-ghost">Login</a>
+
+            <a href="{% url 'signup' %}" class="nav-btn-cta">
+
+                <span>Get Started</span>
+
+                <span class="nav-btn-arrow">→</span>
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- Mobile Hamburger -->
+
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+
+            <span></span><span></span><span></span>
+
+        </button>
+
+
+
+    </div>
+
+
+
+    <!-- Mobile Menu -->
+
+    <div class="nav-mobile-menu" id="nav-mobile-menu">
+
+        <!-- Mobile Search -->
+
+        <div class="nav-mobile-search">
+
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
+            <input type="text" id="nav-mobile-search-input" class="nav-mobile-search-input" placeholder="Search vehicles…" autocomplete="off">
+
+        </div>
+
+        <a href="/" class="nav-mobile-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+
+
+        <a href="{% url 'services' %}" class="nav-mobile-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a>
+
+        <a href="{% url 'about' %}" class="nav-mobile-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+
+        <div class="nav-mobile-divider"></div>
+
+        {% if user.is_authenticated %}
+
+        {% if user.role == "Admin" %}
+
+        <a href="{% url 'admin_dashboard' %}" class="nav-mobile-link">Dashboard</a>
+
+        {% else %}
+
+        <a href="{% url 'user_dashboard' %}" class="nav-mobile-link">Dashboard</a>
+
+        {% endif %}
+
+        <a href="{% url 'logout' %}" class="nav-mobile-link nav-mobile-logout">Sign Out</a>
+
+        {% else %}
+
+        <a href="{% url 'login' %}" class="nav-mobile-link">Login</a>
+
+        <a href="{% url 'signup' %}" class="nav-mobile-link nav-mobile-cta">Get Started</a>
+
+        {% endif %}
+
+        <!-- Mobile Results -->
+
+        <div id="nsp-mobile-results" class="nsp-mobile-results"></div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ═══════════════════════════════════════════════════════
+
+     Vehicle Detail Modal (outside <nav> so z-index is fine)
+
+═══════════════════════════════════════════════════════ -->
+
+<div id="vd-overlay" class="vd-overlay" role="dialog" aria-modal="true" aria-label="Vehicle Detail">
+
+    <div class="vd-modal">
+
+        <!-- Close button -->
+
+        <button class="vd-close" id="vd-close" aria-label="Close">
+
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+
+        </button>
+
+
+
+        <!-- Loading state -->
+
+        <div class="vd-loading" id="vd-modal-loading">
+
+            <div class="vd-spinner"></div>
+
+            <p>Loading vehicle details…</p>
+
+        </div>
+
+
+
+        <!-- Content (filled by JS) -->
+
+        <div class="vd-content" id="vd-modal-content" style="display:none;">
+
+            <!-- Hero image area -->
+
+            <div class="vd-hero" id="vd-hero">
+
+                <img id="vd-img" src="" alt="" class="vd-hero-img">
+
+                <div class="vd-hero-overlay"></div>
+
+                <div class="vd-hero-badges" id="vd-hero-badges"></div>
+
+            </div>
+
+
+
+            <!-- Body -->
+
+            <div class="vd-body">
+
+                <!-- Title row -->
+
+                <div class="vd-title-row">
+
+                    <div>
+
+                        <h2 class="vd-name" id="vd-name"></h2>
+
+                        <p class="vd-variant" id="vd-variant"></p>
+
+                    </div>
+
+                    <div class="vd-price-block" id="vd-price-block"></div>
+
+                </div>
+
+
+
+                <!-- Description -->
+
+                <p class="vd-description" id="vd-description"></p>
+
+
+
+                <!-- Specs grid -->
+
+                <div class="vd-specs-title">Specifications</div>
+
+                <div class="vd-specs" id="vd-specs"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+
+(function() {
+
+    const searchInput   = document.getElementById('nav-search-input');
+
+    const clearBtn      = document.getElementById('nav-search-clear');
+
+    const popup         = document.getElementById('nav-search-popup');
+
+    const loading       = document.getElementById('nsp-loading');
+
+    const results       = document.getElementById('nsp-results');
+
+    const empty         = document.getElementById('nsp-empty');
+
+    const hint          = document.getElementById('nsp-hint');
+
+    const chips         = document.querySelectorAll('.nsp-chip');
+
+    const minPriceInput = document.getElementById('nsp-min-price');
+
+    const maxPriceInput = document.getElementById('nsp-max-price');
+
+    const mobileInput   = document.getElementById('nav-mobile-search-input');
+
+    const mobileResults = document.getElementById('nsp-mobile-results');
+
+
+
+    let debounceTimer = null;
+
+    let activeFuel = '';
+
+
+
+    function formatPrice(val) {
+
+        const n = parseFloat(val);
+
+        if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
+
+        if (n >= 100000)   return '₹' + (n / 100000).toFixed(1) + ' L';
+
+        return '₹' + n.toLocaleString('en-IN');
+
+    }
+
+
+
+    function fuelClass(fuel) {
+
+        const map = { Petrol: 'nsp-fuel-petrol', Diesel: 'nsp-fuel-diesel', Electric: 'nsp-fuel-electric', Hybrid: 'nsp-fuel-hybrid', CNG: 'nsp-fuel-cng' };
+
+        return map[fuel] || 'nsp-fuel-petrol';
+
+    }
+
+
+
+    function buildCard(v) {
+
+        const name = v.brand + ' ' + v.model + (v.variant ? ' ' + v.variant : '');
+
+        const imgHtml = v.image
+
+            ? `<div class="nsp-card-img"><img src="${v.image}" alt="${name}" loading="lazy" onerror="this.parentElement.className='nsp-card-img-placeholder'; this.remove();"></div>`
+
+            : `<div class="nsp-card-img-placeholder"></div>`;
+
+        const priceHtml = v.offer_price
+
+            ? `<div class="nsp-card-price"><div class="price-offer">${formatPrice(v.offer_price)}</div><div class="price-orig">${formatPrice(v.price)}</div></div>`
+
+            : `<div class="nsp-card-price"><div class="price-main">${formatPrice(v.price)}</div></div>`;
+
+        const featuredBadge = v.is_featured ? `<span class="nsp-featured-badge">Featured</span>` : '';
+
+        const card = document.createElement('div');
+
+        card.className = 'nsp-card';
+
+        card.setAttribute('data-vehicle-id', v.id);
+
+        card.setAttribute('role', 'button');
+
+        card.setAttribute('tabindex', '0');
+
+        card.style.cursor = 'pointer';
+
+        card.innerHTML = `
+
+            ${imgHtml}
+
+            <div class="nsp-card-info">
+
+                <p class="nsp-card-name">${name}</p>
+
+                <div class="nsp-card-meta">
+
+                    <span class="nsp-fuel-badge ${fuelClass(v.fuel_type)}">${v.fuel_type}</span>
+
+                    ${v.body_type ? `<span>${v.body_type}</span>` : ''}
+
+                    ${featuredBadge}
+
+                </div>
+
+            </div>
+
+            ${priceHtml}
+
+            <span class="nsp-card-arrow">›</span>
+
+        `;
+
+        card.addEventListener('click', () => openVehicleModal(v.id));
+
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openVehicleModal(v.id); });
+
+        return card;
+
+    }
+
+
+
+    /* ── Vehicle Detail Modal ─────────────────────────────────── */
+
+    const vdOverlay  = document.getElementById('vd-overlay');
+
+    const vdClose    = document.getElementById('vd-close');
+
+    const vdLoading  = document.getElementById('vd-modal-loading');
+
+    const vdContent  = document.getElementById('vd-modal-content');
+
+
+
+    function fuelClassModal(fuel) {
+
+        const map = { Petrol:'nsp-fuel-petrol', Diesel:'nsp-fuel-diesel', Electric:'nsp-fuel-electric', Hybrid:'nsp-fuel-hybrid', CNG:'nsp-fuel-cng' };
+
+        return map[fuel] || 'nsp-fuel-petrol';
+
+    }
+
+
+
+    function openVehicleModal(id) {
+
+        // Show overlay + loading
+
+        vdOverlay.classList.add('active');
+
+        document.body.style.overflow = 'hidden';
+
+        vdLoading.style.display = 'flex';
+
+        vdContent.style.display = 'none';
+
+
+
+        fetch(`/vehicle/${id}/detail/`)
+
+            .then(r => r.json())
+
+            .then(v => {
+
+                const fullName = v.brand + ' ' + v.model + (v.variant ? ' ' + v.variant : '');
+
+
+
+                // Hero image
+
+                const img = document.getElementById('vd-img');
+
+                if (v.image) {
+
+                    img.src = v.image;
+
+                    img.alt = fullName;
+
+                    document.getElementById('vd-hero').style.display = 'block';
+
+                } else {
+
+                    document.getElementById('vd-hero').style.display = 'none';
+
+                }
+
+
+
+                // Badges
+
+                const badges = document.getElementById('vd-hero-badges');
+
+                badges.innerHTML = '';
+
+                if (v.is_featured) badges.innerHTML += `<span class="vd-badge vd-badge-featured">Featured</span>`;
+
+                badges.innerHTML += `<span class="vd-badge nsp-fuel-badge ${fuelClassModal(v.fuel_type)}">${v.fuel_type}</span>`;
+
+                if (v.body_type) badges.innerHTML += `<span class="vd-badge vd-badge-body">${v.body_type}</span>`;
+
+
+
+                // Title
+
+                document.getElementById('vd-name').textContent = v.brand + ' ' + v.model;
+
+                const variantEl = document.getElementById('vd-variant');
+
+                variantEl.textContent = v.variant ? v.variant : '';
+
+                variantEl.style.display = v.variant ? 'block' : 'none';
+
+
+
+                // Price
+
+                const priceBlock = document.getElementById('vd-price-block');
+
+                if (v.offer_price) {
+
+                    const disc = v.discount_percentage ? `<span class="vd-discount">${v.discount_percentage}% OFF</span>` : '';
+
+                    priceBlock.innerHTML = `
+
+                        ${disc}
+
+                        <div class="vd-price-offer">${formatPrice(v.offer_price)}</div>
+
+                        <div class="vd-price-orig">${formatPrice(v.price)}</div>`;
+
+                } else {
+
+                    priceBlock.innerHTML = `<div class="vd-price-main">${formatPrice(v.price)}</div>`;
+
+                }
+
+
+
+                // Description
+
+                const descEl = document.getElementById('vd-description');
+
+                descEl.textContent = v.description || '';
+
+                descEl.style.display = v.description ? 'block' : 'none';
+
+
+
+                // Specs
+
+                const specs = [
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17s1-4 9-4 9 4 9 4"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/><path d="M5 13V7l3-4h8l3 4v6"/></svg>', label: 'Fuel Type',    value: v.fuel_type },
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M21 12h-2M12 21v-2M12 5V3M5 12H3"/></svg>', label: 'Transmission', value: v.transmission },
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>', label: 'Engine',       value: v.engine },
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', label: 'Mileage',      value: parseFloat(v.mileage) > 0 ? v.mileage + ' km/l' : 'EV / N/A' },
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', label: 'Seating',      value: v.seating_capacity + ' Seats' },
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="22" height="16" rx="3"/><path d="M1 10h22"/></svg>', label: 'Body Type',    value: v.body_type || '──' },
+
+                    { svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>', label: 'Color',        value: v.color || '──' },
+
+                ];
+
+                const specsEl = document.getElementById('vd-specs');
+
+                specsEl.innerHTML = specs.map(s => `
+
+                    <div class="vd-spec-item">
+
+                        <span class="vd-spec-icon">${s.svg}</span>
+
+                        <div>
+
+                            <div class="vd-spec-label">${s.label}</div>
+
+                            <div class="vd-spec-value">${s.value}</div>
+
+                        </div>
+
+                    </div>`).join('');
+
+
+
+                // Show content
+
+                vdLoading.style.display = 'none';
+
+                vdContent.style.display = 'block';
+
+            })
+
+            .catch(() => {
+
+                vdLoading.innerHTML = '<p style="color:#ea3943">Failed to load vehicle details.</p>';
+
+            });
+
+    }
+
+
+
+    function closeVehicleModal() {
+
+        vdOverlay.classList.remove('active');
+
+        document.body.style.overflow = '';
+
+    }
+
+
+
+    vdClose.addEventListener('click', closeVehicleModal);
+
+    vdOverlay.addEventListener('click', e => {
+
+        if (e.target === vdOverlay) closeVehicleModal();
+
+    });
+
+    document.addEventListener('keydown', e => {
+
+        if (e.key === 'Escape') closeVehicleModal();
+
+    });
+
+
+
+    function setState(state) {
+
+        loading.classList.remove('active');
+
+        empty.classList.remove('active');
+
+        results.innerHTML = '';
+
+        hint.style.display = 'none';
+
+        if (state === 'loading') loading.classList.add('active');
+
+        else if (state === 'empty') empty.classList.add('active');
+
+        else if (state === 'hint') hint.style.display = 'flex';
+
+    }
+
+
+
+    function doSearch(query, isDesktop) {
+
+        const targetResults = isDesktop ? results : mobileResults;
+
+
+
+        if (!query && !activeFuel && !minPriceInput.value && !maxPriceInput.value) {
+
+            if (isDesktop) { setState('hint'); }
+
+            else { targetResults.innerHTML = ''; }
+
+            return;
+
+        }
+
+
+
+        if (isDesktop) setState('loading');
+
+
+
+        const params = new URLSearchParams();
+
+        if (query) params.set('q', query);
+
+        if (activeFuel) params.set('fuel_type', activeFuel);
+
+        // Convert Lakhs → full rupees for the backend (DB stores full rupees)
+
+        if (minPriceInput.value) params.set('min_price', Math.round(parseFloat(minPriceInput.value) * 100000));
+
+        if (maxPriceInput.value) params.set('max_price', Math.round(parseFloat(maxPriceInput.value) * 100000));
+
+
+
+        fetch('/search/?' + params.toString())
+
+            .then(r => r.json())
+
+            .then(data => {
+
+                if (isDesktop) loading.classList.remove('active');
+
+                targetResults.innerHTML = '';
+
+                if (!data.results || data.results.length === 0) {
+
+                    if (isDesktop) setState('empty');
+
+                    else targetResults.innerHTML = '<p style="color:rgba(255,255,255,0.35);font-size:0.82rem;padding:8px 0;">No vehicles found</p>';
+
+                    return;
+
+                }
+
+                data.results.forEach(v => {
+
+                    targetResults.appendChild(buildCard(v, true));
+
+                });
+
+                if (isDesktop && results.innerHTML) empty.classList.remove('active');
+
+            })
+
+            .catch(() => {
+
+                if (isDesktop) setState('empty');
+
+            });
+
+    }
+
+
+
+    function triggerSearch(isDesktop) {
+
+        const q = isDesktop ? searchInput.value.trim() : mobileInput.value.trim();
+
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(() => doSearch(q, isDesktop), 300);
+
+    }
+
+
+
+    // Desktop search input
+
+    searchInput.addEventListener('input', function() {
+
+        clearBtn.classList.toggle('visible', this.value.length > 0);
+
+        popup.classList.add('active');
+
+        triggerSearch(true);
+
+    });
+
+
+
+    searchInput.addEventListener('focus', function() {
+
+        popup.classList.add('active');
+
+        if (!this.value && !activeFuel) setState('hint');
+
+    });
+
+
+
+    // Clear button
+
+    clearBtn.addEventListener('click', function() {
+
+        searchInput.value = '';
+
+        clearBtn.classList.remove('visible');
+
+        chips.forEach(c => c.classList.remove('active'));
+
+        activeFuel = '';
+
+        minPriceInput.value = '';
+
+        maxPriceInput.value = '';
+
+        setState('hint');
+
+        searchInput.focus();
+
+    });
+
+
+
+    // Fuel chips
+
+    chips.forEach(chip => {
+
+        chip.addEventListener('click', function() {
+
+            if (this.classList.contains('active')) {
+
+                this.classList.remove('active');
+
+                activeFuel = '';
+
+            } else {
+
+                chips.forEach(c => c.classList.remove('active'));
+
+                this.classList.add('active');
+
+                activeFuel = this.dataset.fuel;
+
+            }
+
+            triggerSearch(true);
+
+        });
+
+    });
+
+
+
+    // Price range inputs
+
+    [minPriceInput, maxPriceInput].forEach(inp => {
+
+        inp.addEventListener('input', () => triggerSearch(true));
+
+    });
+
+
+
+    // Mobile search
+
+    mobileInput.addEventListener('input', function() {
+
+        triggerSearch(false);
+
+    });
+
+
+
+    // Close popup on outside click
+
+    document.addEventListener('click', function(e) {
+
+        const wrap = document.getElementById('nav-search-wrap');
+
+        if (wrap && !wrap.contains(e.target)) {
+
+            popup.classList.remove('active');
+
+        }
+
+    });
+
+
+
+    // Navbar scroll logic
+
+    const nav = document.getElementById('site-nav');
+
+    window.addEventListener('scroll', () => {
+
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+
+    });
+
+
+
+    // Mobile menu toggle
+
+    const hamburger = document.getElementById('nav-hamburger');
+
+    const mobileMenu = document.getElementById('nav-mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+
+        hamburger.classList.toggle('open');
+
+        mobileMenu.classList.toggle('open');
+
+    });
+
+})();
+
+</script>
+
+
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const notifBtn = document.getElementById('nav-notif-btn');
+
+    const notifDropdown = document.getElementById('nav-notif-dropdown');
+
+    const notifList = document.getElementById('nnd-list');
+
+    
+
+    if (notifBtn) {
+
+        notifBtn.addEventListener('click', function(e) {
+
+            e.stopPropagation();
+
+            notifDropdown.classList.toggle('active');
+
+            
+
+            if (notifDropdown.classList.contains('active')) {
+
+                loadNotifications();
+
+            }
+
+        });
+
+    }
+
+
+
+    document.addEventListener('click', function(e) {
+
+        if (notifDropdown && !notifDropdown.contains(e.target) && e.target !== notifBtn) {
+
+            notifDropdown.classList.remove('active');
+
+        }
+
+    });
+
+
+
+    function loadNotifications() {
+
+        if (!notifList) return;
+
+        notifList.innerHTML = '<div class="nnd-loading"><div class="nsp-spinner"></div></div>';
+
+
+
+        fetch('/notifications/fetch/')
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (data.notifications.length === 0) {
+
+                    notifList.innerHTML = '<div class="nnd-empty">No notifications yet</div>';
+
+                    return;
+
+                }
+
+                
+
+                let html = '';
+
+                data.notifications.forEach(n => {
+
+                    html += `
+
+                        <a href="#" class="nnd-item ${n.is_read ? '' : 'unread'}" data-id="${n.id}">
+
+                            <span class="nnd-item-title">${n.title}</span>
+
+                            <span class="nnd-item-msg">${n.message}</span>
+
+                            <span class="nnd-item-time">${n.created_at}</span>
+
+                        </a>
+
+                    `;
+
+                });
+
+                notifList.innerHTML = html;
+
+                
+
+                // Add click event for items
+
+                notifList.querySelectorAll('.nnd-item').forEach(item => {
+
+                    item.addEventListener('click', function(e) {
+
+                        e.preventDefault();
+
+                        const id = this.dataset.id;
+
+                        if (this.classList.contains('unread')) {
+
+                            fetch(`/notifications/mark-as-read/${id}/`)
+
+                                .then(() => {
+
+                                    this.classList.remove('unread');
+
+                                    // Update badge count
+
+                                    const badge = document.querySelector('.nav-notif-badge');
+
+                                    if (badge) {
+
+                                        let count = parseInt(badge.textContent);
+
+                                        if (count > 1) {
+
+                                            badge.textContent = count - 1;
+
+                                        } else {
+
+                                            badge.remove();
+
+                                        }
+
+                                    }
+
+                                });
+
+                        }
+
+                    });
+
+                });
+
+            })
+
+            .catch(err => {
+
+                notifList.innerHTML = '<div class="nnd-empty">Failed to load notifications</div>';
+
+            });
+
+    }
+
+});
+
+</script>
+
+
+

@@ -19,4 +19,6 @@ urlpatterns = [
     path("compare/api/", views.compareVehiclesView, name="compare_vehicles_api"),
     path("search/", views.searchVehiclesView, name="search_vehicles"),
     path("vehicle/<int:vehicle_id>/detail/", views.vehicleDetailView, name="vehicle_detail"),
+    path("about/", views.aboutView, name="about"),
+    path("services/", views.servicesView, name="services"),
 ]

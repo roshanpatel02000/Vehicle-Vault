@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accessories | Vehicle Vault{% endblock %}
+
+{% block body_class %}accessories-page{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block content %}
+<style>
+    /* Compact Overrides for Accessories */
+    .av-hero { padding: 35px 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .av-hero h1 { font-size: clamp(1.4rem, 3.5vw, 2.2rem); }
+    .av-hero-eyebrow { padding: 3px 10px; font-size: 0.65rem; margin-bottom: 12px; }
+    .av-hero-sub { font-size: 0.85rem; opacity: 0.7; }
+    
+    .av-filter-bar { padding: 8px 24px; }
+    .av-filter-inner { gap: 10px; }
+    .av-search-box, .av-select { padding: 8px 14px; border-radius: 10px; font-size: 0.8rem; }
+    
+    .av-grid-section { padding: 30px 24px 80px; }
+    .av-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+    
+    .av-card { border-radius: 16px; }
+    .av-card-img-wrap { height: 160px; }
+    .av-card-body { padding: 14px; }
+    .av-card-name { font-size: 0.95rem; min-height: 2.4em; }
+    .av-card-brand { font-size: 0.65rem; }
+    .av-card-specs { margin-bottom: 12px; }
+    .av-spec-chip { font-size: 0.68rem; padding: 3px 7px; }
+    
+    .av-card-footer { padding-top: 10px; min-height: 50px; }
+    .av-main-price { font-size: 1rem; }
+    .vv-details-btn { padding: 6px 12px; font-size: 0.75rem; border-radius: 40px; }
+</style>
+<!-- Hero -->
+<section class="av-hero">
+    <div class="av-hero-eyebrow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+        Premium Enhancements
+    </div>
+    <h1>Accessory <span>Suggestions</span></h1>
+    <p class="av-hero-sub">{{ accessories|length }} item{{ accessories|length|pluralize }} available for your fleet</p>
+</section>
+
+<!-- Filter Bar -->
+<div class="av-filter-bar">
+    <form method="get" action="{% url 'accessories' %}" class="av-filter-inner" id="acc-filter-form">
+        <div class="av-search-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search enhancements…" autocomplete="off" id="av-search-input">
+        </div>
+
+        <select name="category" class="av-select" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="brand" class="av-select" onchange="this.form.submit()">
+            <option value="">All Brands</option>
+            {% for b in brands %}
+            <option value="{{ b }}" {% if brand_filter == b %}selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+        </select>
+
+        <span class="av-filter-count"><strong>{{ accessories|length }}</strong> result{{ accessories|length|pluralize }}</span>
+
+        {% if search_query or category_filter or brand_filter %}
+        <a href="{% url 'accessories' %}" class="av-reset-link">✖ Clear filters</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Grid Area -->
+<section class="av-grid-section">
+    {% if accessories %}
+    <div class="av-grid" id="av-grid">
+        {% for acc in accessories %}
+        <div class="av-card">
+            <div class="av-card-img-wrap">
+                {% if acc.image %}
+                <img src="{{ acc.image.url }}" alt="{{ acc.accessory_name }}" loading="lazy">
+                {% else %}
+                <div class="av-card-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                </div>
+                {% endif %}
+                
+                <div class="av-card-badges">
+                    <span class="av-badge av-badge-featured">{{ acc.vehicle_type }}</span>
+                </div>
+            </div>
+            
+            <div class="av-card-body">
+                <span class="av-card-brand">{{ acc.brand|default:"Premium Edition" }}</span>
+                <h3 class="av-card-name">{{ acc.accessory_name }}</h3>
+                
+                <div class="av-card-specs">
+                    <div class="av-spec-chip">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        <span>Genuine Part</span>
+                    </div>
+                </div>
+
+                <div class="av-card-footer">
+                    <div class="av-price-block">
+                        <div class="av-discount-badge" style="visibility:hidden;">0% OFF</div>
+                        <div class="av-main-price price-fmt">₹{{ acc.price|floatformat:0 }}</div>
+                        <div class="av-orig-price price-fmt" style="visibility:hidden;">0</div>
+                    </div>
+                    <button class="vv-details-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="av-empty">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <h3>No accessories found</h3>
+        <p>Try different filters or search terms.</p>
+        <a href="{% url 'accessories' %}">View all accessories →</a>
+    </div>
+    {% endif %}
+</section>
+
+<script>
+(function () {
+    const input = document.getElementById('av-search-input');
+    const form  = document.getElementById('acc-filter-form');
+    if (input && form) {
+        let timer;
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () { form.submit(); }, 600);
+        });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { clearTimeout(timer); form.submit(); }
+        });
+    }
+})();
+</script>
+
+{% endblock %}

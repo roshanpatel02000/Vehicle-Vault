@@ -1,0 +1,10 @@
+{
+    "python.defaultInterpreterPath": "r:\\VEHICLE_VAULT\\venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "r:\\VEHICLE_VAULT\\vehicle_vault"
+    ],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.terminal.activateEnvInCurrentTerminal": true
+}

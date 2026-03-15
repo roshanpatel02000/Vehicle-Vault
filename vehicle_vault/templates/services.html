@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Our Services ── Vehicle Vault{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block content %}
+<style>
+    .services-hero {
+        padding: 90px 24px;
+        text-align: center;
+        background: linear-gradient(to bottom, rgba(13, 15, 20, 0) 0%, rgba(255, 90, 0, 0.03) 100%);
+    }
+
+    .services-eyebrow {
+        display: inline-block;
+        padding: 5px 14px;
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.5);
+        font-family: 'Inter', sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        border-radius: 100px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .services-hero h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.8rem);
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.02em;
+        margin-bottom: 20px;
+    }
+
+    .services-hero-sub {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.5);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .services-grid {
+        padding: 60px 24px 120px;
+        max-width: 1300px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .service-card {
+        background: #16181d;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 28px;
+        padding: 45px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-card:hover {
+        transform: translateY(-8px);
+        background: #1a1d23;
+        border-color: rgba(255, 90, 0, 0.15);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .service-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, rgba(255, 90, 0, 0.1), rgba(255, 90, 0, 0.05));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ff5a00;
+        margin-bottom: 5px;
+    }
+
+    .service-card h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .service-card p {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.4);
+        line-height: 1.6;
+        flex-grow: 1;
+    }
+
+    .service-link {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #ff5a00;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        transition: gap 0.2s;
+    }
+
+    .service-card:hover .service-link {
+        gap: 12px;
+    }
+
+    .service-card::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(255, 90, 0, 0.05) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s;
+    }
+
+    .service-card:hover::after {
+        opacity: 1;
+    }
+</style>
+
+<div class="services-hero">
+    <div class="services-eyebrow">Solutions & Features</div>
+    <h1>Comprehensive <span>Automotive</span> Suite</h1>
+    <p class="services-hero-sub">
+        Discover the tools and features that make Vehicle Vault the definitive choice for modern car enthusiasts.
+    </p>
+</div>
+
+<div class="services-grid">
+    <div class="service-card">
+        <div class="service-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+        </div>
+        <h2>Smart Inventory</h2>
+        <p>Browse a curated collection of premium vehicles with advanced filtering by fuel type, body style, and price range. Our real-time search puts the vault at your fingertips.</p>
+        <a href="{% url 'all_vehicles' %}" class="service-link">View Vehicles <span>→</span></a>
+    </div>
+
+    <div class="service-card">
+        <div class="service-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h2>Advanced Comparison</h2>
+        <p>Compare vehicles side-by-side with our proprietary similarity scoring. Analyze performance, pricing, and specs to find the perfect match for your lifestyle.</p>
+        <a href="{% url 'compare_vehicles' %}" class="service-link">Try Compare <span>→</span></a>
+    </div>
+
+    <div class="service-card">
+        <div class="service-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h2>Accessory Suggestions</h2>
+        <p>Enhance your driving experience with AI-powered accessory suggestions. Find the best parts and upgrades tailored specifically to your chosen vehicle.</p>
+        <a href="{% url 'accessories' %}" class="service-link">Shop Accessories <span>→</span></a>
+    </div>
+
+    <div class="service-card">
+        <div class="service-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </div>
+        <h2>Smart Notifications</h2>
+        <p>Never miss an update. Receive instant alerts about price drops, new arrivals, and system announcements through your personalized notification hub.</p>
+        <a href="{% url 'signup' %}" class="service-link">Join Us <span>→</span></a>
+    </div>
+</div>
+{% endblock %}

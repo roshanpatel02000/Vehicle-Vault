@@ -9,6 +9,7 @@ import json
 
 from .decorators import role_required
 from .models import Vehicle, VehicleComparison
+from accessory.models import Accessory, VehicleAccessoryMap
 
 
 def _run_comparison(v1, v2):
@@ -200,6 +201,16 @@ def vehicleDetailView(request, vehicle_id):
         'description':         v.description or '',
         'image':               v.get_display_image(),
         'is_featured':         v.is_featured,
+        'accessories': [
+            {
+                'name': mapping.accessory.accessory_name,
+                'price': str(mapping.accessory.price),
+                'brand': mapping.accessory.brand or 'N/A',
+                'description': mapping.accessory.description or '',
+                'image': mapping.accessory.image.url if mapping.accessory.image else '',
+            }
+            for mapping in v.accessory_mappings.all()
+        ]
     }
     return JsonResponse(data)
 
@@ -448,14 +459,18 @@ def compareVehiclesView(request):
 def AdminDashboardView(request):
     from core.models import User
     from Notification.models import Notification
+    from accessory.models import Accessory
+    
     total_users = User.objects.count()
     total_vehicles = Vehicle.objects.count()
     total_notifications = Notification.objects.count()
+    total_accessories = Accessory.objects.count()
     
     context = {
         'total_users': total_users,
         'total_vehicles': total_vehicles,
-        'total_notifications': total_notifications
+        'total_notifications': total_notifications,
+        'total_accessories': total_accessories
     }
     return render(request, "vehicle/admin/Admin_dashboard.html", context)
 
@@ -602,6 +617,17 @@ def ApproveAdminView(request, user_id):
     
     messages.success(request, f"Admin account for {admin_to_approve.email} has been approved.")
     return redirect('pending_admins')
+
+
+# ─── Static Content Pages ────────────────────────────────────────────────────
+def aboutView(request):
+    """Render the About Us page."""
+    return render(request, "about.html")
+
+
+def servicesView(request):
+    """Render the Services page."""
+    return render(request, "services.html")
 
 @login_required(login_url="login")
 @role_required(allowed_roles=["Admin"])
