@@ -60,6 +60,8 @@
 </section>
 
 <!-- ===== STATS BAR ===== -->
+
+
 <div class="vv-stats-bar">
     <div class="vv-stat-item">
         <span class="vv-stat-n">{{ vehicle_count }}+</span>
@@ -124,22 +126,33 @@
                                 ₹{{ vehicle.price|floatformat:0 }}
                                 {% endif %}
                             </p>
-                            <button class="vv-details-btn"
-                                data-id="{{ vehicle.id }}"
-                                data-image="{{ vehicle.get_display_image }}"
-                                data-name="{{ vehicle.brand }} {{ vehicle.model }}{% if vehicle.variant %} {{ vehicle.variant }}{% endif %}"
-                                data-tag="{{ vehicle.body_type|default:'Vehicle' }} · {{ vehicle.fuel_type }}"
-                                data-engine="{{ vehicle.engine }}"
-                                data-mileage="{{ vehicle.mileage }}"
-                                data-seats="{{ vehicle.seating_capacity }}"
-                                data-transmission="{{ vehicle.transmission }}"
-                                data-color="{{ vehicle.color|default:'N/A' }}"
-                                data-price="₹{{ vehicle.price|floatformat:0 }}"
-                                data-offer="{% if vehicle.offer_price %}₹{{ vehicle.offer_price|floatformat:0 }}{% endif %}"
-                                data-discount="{% if vehicle.discount_percentage %}{{ vehicle.discount_percentage }}% OFF{% endif %}"
-                                data-safety="{{ vehicle.safety_rating|default:'N/A' }}"
-                                data-desc="{{ vehicle.description|default:''|escapejs }}"
-                            >View Details</button>
+                            <!-- Card Actions -->
+                            <div class="vv-card-actions">
+                                <button class="vv-details-btn"
+                                    data-id="{{ vehicle.id }}"
+                                    data-image="{{ vehicle.get_display_image }}"
+                                    data-name="{{ vehicle.brand }} {{ vehicle.model }}{% if vehicle.variant %} {{ vehicle.variant }}{% endif %}"
+                                    data-tag="{{ vehicle.body_type|default:'Vehicle' }} · {{ vehicle.fuel_type }}"
+                                    data-engine="{{ vehicle.engine }}"
+                                    data-mileage="{{ vehicle.mileage }}"
+                                    data-seats="{{ vehicle.seating_capacity }}"
+                                    data-transmission="{{ vehicle.transmission }}"
+                                    data-color="{{ vehicle.color|default:'N/A' }}"
+                                    data-price="₹{{ vehicle.price|floatformat:0 }}"
+                                    data-offer="{% if vehicle.offer_price %}₹{{ vehicle.offer_price|floatformat:0 }}{% endif %}"
+                                    data-discount="{% if vehicle.discount_percentage %}{{ vehicle.discount_percentage }}% OFF{% endif %}"
+                                    data-safety="{{ vehicle.safety_rating|default:'N/A' }}"
+                                    data-desc="{{ vehicle.description|default:''|escapejs }}"
+                                >View Details</button>
+                                
+                                <button class="vv-save-btn vv-save-vehicle-btn {% if vehicle.id in saved_vehicle_ids %}vv-save-btn-active{% endif %}" data-id="{{ vehicle.id }}" 
+                                        data-saved="{% if vehicle.id in saved_vehicle_ids %}true{% else %}false{% endif %}" 
+                                        data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+                                        data-login-url="{% url 'login' %}?next={{ request.path }}"
+                                        title="Save Vehicle">
+                                    <svg class="heart-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     {% empty %}
@@ -293,22 +306,33 @@
                         ₹{{ vehicle.price|floatformat:0 }}
                         {% endif %}
                     </p>
-                    <button class="vv-details-btn"
-                        data-id="{{ vehicle.id }}"
-                        data-image="{{ vehicle.get_display_image }}"
-                        data-name="{{ vehicle.brand }} {{ vehicle.model }}{% if vehicle.variant %} {{ vehicle.variant }}{% endif %}"
-                        data-tag="{{ vehicle.body_type|default:'Vehicle' }} · {{ vehicle.fuel_type }}"
-                        data-engine="{{ vehicle.engine }}"
-                        data-mileage="{{ vehicle.mileage }}"
-                        data-seats="{{ vehicle.seating_capacity }}"
-                        data-transmission="{{ vehicle.transmission }}"
-                        data-color="{{ vehicle.color|default:'N/A' }}"
-                        data-price="₹{{ vehicle.price|floatformat:0 }}"
-                        data-offer="{% if vehicle.offer_price %}₹{{ vehicle.offer_price|floatformat:0 }}{% endif %}"
-                        data-discount="{% if vehicle.discount_percentage %}{{ vehicle.discount_percentage }}% OFF{% endif %}"
-                        data-safety="{{ vehicle.safety_rating|default:'N/A' }}"
-                        data-desc="{{ vehicle.description|default:''|escapejs }}"
-                    >View Details</button>
+                    <!-- Card Actions -->
+                    <div class="vv-card-actions">
+                        <button class="vv-details-btn"
+                            data-id="{{ vehicle.id }}"
+                            data-image="{{ vehicle.get_display_image }}"
+                            data-name="{{ vehicle.brand }} {{ vehicle.model }}{% if vehicle.variant %} {{ vehicle.variant }}{% endif %}"
+                            data-tag="{{ vehicle.body_type|default:'Vehicle' }} · {{ vehicle.fuel_type }}"
+                            data-engine="{{ vehicle.engine }}"
+                            data-mileage="{{ vehicle.mileage }}"
+                            data-seats="{{ vehicle.seating_capacity }}"
+                            data-transmission="{{ vehicle.transmission }}"
+                            data-color="{{ vehicle.color|default:'N/A' }}"
+                            data-price="₹{{ vehicle.price|floatformat:0 }}"
+                            data-offer="{% if vehicle.offer_price %}₹{{ vehicle.offer_price|floatformat:0 }}{% endif %}"
+                            data-discount="{% if vehicle.discount_percentage %}{{ vehicle.discount_percentage }}% OFF{% endif %}"
+                            data-safety="{{ vehicle.safety_rating|default:'N/A' }}"
+                            data-desc="{{ vehicle.description|default:''|escapejs }}"
+                        >View Details</button>
+                        
+                        <button class="vv-save-btn vv-save-vehicle-btn {% if vehicle.id in saved_vehicle_ids %}vv-save-btn-active{% endif %}" data-id="{{ vehicle.id }}"
+                                data-saved="{% if vehicle.id in saved_vehicle_ids %}true{% else %}false{% endif %}"
+                                data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+                                data-login-url="{% url 'login' %}?next={{ request.path }}"
+                                title="Save Vehicle">
+                            <svg class="heart-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             {% empty %}
@@ -386,192 +410,6 @@ document.getElementById('home-cmp-btn').addEventListener('click', function(){
 });
 </script>
 
-<!-- ===== VEHICLE DETAIL MODAL ===== -->
-<div id="vv-modal-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
-    <div id="vv-modal" style="background:#13151a;border-radius:24px;max-width:860px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,0.8);position:relative;">
-        <!-- Close -->
-        <button id="vv-modal-close" style="position:absolute;top:20px;right:20px;z-index:20;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:background 0.2s;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-        <!-- Image -->
-        <div id="vv-modal-img" style="width:100%;height:380px;background:linear-gradient(135deg,#0d0f14,#1a1d23);position:relative;overflow:hidden;flex-shrink:0;">
-            <img id="vv-modal-img-el" src="" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0.95;display:none;">
-            <div id="vv-modal-img-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
-            </div>
-            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(19,21,26,1) 0%,rgba(19,21,26,0.6) 20%,transparent 60%);"></div>
-            <div style="position:absolute;inset:0;background:radial-gradient(circle at center top, transparent 0%, rgba(19,21,26,0.4) 100%);"></div>
-            <div style="position:absolute;bottom:24px;left:32px;z-index:2;">
-                <p id="vv-modal-tag" style="font-family:Inter,sans-serif;font-size:11px;font-weight:800;letter-spacing:0.12em;color:#ff5a00;text-transform:uppercase;margin-bottom:8px;"></p>
-                <h2 id="vv-modal-name" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin:0;"></h2>
-            </div>
-            <div id="vv-modal-discount-badge" style="position:absolute;top:20px;left:24px;background:#ff5a00;color:#fff;font-family:Inter,sans-serif;font-size:11px;font-weight:800;letter-spacing:0.08em;padding:4px 12px;border-radius:20px;display:none;z-index:2;"></div>
-        </div>
-        <!-- Body -->
-        <div style="padding:0 32px 32px;overflow-y:auto;flex:1;background:#13151a;">
-            <!-- Price row -->
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;margin-top:16px;">
-                <span id="vv-modal-offer" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:800;color:#fff;line-height:1;"></span>
-                <span id="vv-modal-orig" style="font-family:Inter,sans-serif;font-size:15px;font-weight:500;color:#6b7280;text-decoration:line-through;display:none;"></span>
-                <span id="vv-modal-saving" style="font-family:Inter,sans-serif;font-size:10px;font-weight:800;color:#10b981;background:rgba(16,185,129,0.15);padding:4px 10px;border-radius:20px;display:none;align-self:center;"></span>
-            </div>
-            <!-- Specs grid -->
-            <style>
-                .vv-spec-pill { display: flex; align-items: center; gap: 14px; background: #1a1c23; border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.03); }
-                .vv-spec-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,90,0,0.08); color: #ff5a00; border-radius: 8px; flex-shrink: 0; }
-                .vv-spec-label { font-family: Inter,sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 2px; }
-                .vv-spec-val { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin: 0; }
-            </style>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px;">
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20v-20zM17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span><div><p class="vv-spec-label">Engine</p><p id="vv-modal-engine" class="vv-spec-val"></p></div></div>
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><div><p class="vv-spec-label">Mileage</p><p id="vv-modal-mileage" class="vv-spec-val"></p></div></div>
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><p class="vv-spec-label">Seating</p><p id="vv-modal-seats" class="vv-spec-val"></p></div></div>
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><p class="vv-spec-label">Transmission</p><p id="vv-modal-trans" class="vv-spec-val"></p></div></div>
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><p class="vv-spec-label">Fuel Type</p><p id="vv-modal-fuel" class="vv-spec-val"></p></div></div>
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></span><div><p class="vv-spec-label">Color</p><p id="vv-modal-color" class="vv-spec-val"></p></div></div>
-                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><div><p class="vv-spec-label">Safety Rating</p><p id="vv-modal-safety" class="vv-spec-val"></p></div></div>
-            </div>
-            <!-- Description -->
-            <div id="vv-modal-desc-wrap" style="background:#1a1c23;border:1px solid rgba(255,255,255,0.03);border-radius:12px;padding:24px;margin-bottom:0;display:none;">
-                <p style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#ff5a00;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;">About this vehicle</p>
-                <p id="vv-modal-desc" style="font-family:Inter,sans-serif;font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6;margin:0;"></p>
-            </div>
-            <!-- Accessories -->
-            <div id="vv-modal-accessory-wrap" style="margin-top: 24px; display: none;">
-                <p style="font-family:Inter,sans-serif;font-size:11px;font-weight:700;color:#ff5a00;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;">Recommended Accessories</p>
-                <div id="vv-modal-accessories" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px;">
-                    <!-- Accessories will be loaded here -->
-                </div>
-            </div>
-
-            <!-- CTA -->
-            <a href="{% url 'signup' %}" style="display:block;width:100%;text-align:center;background:linear-gradient(135deg,#ff5a00,#ff7b33);color:#fff;font-family:Montserrat,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;padding:15px;border-radius:12px;box-shadow:0 4px 20px rgba(255,90,0,0.35);transition:all 0.3s;">Create Account to Book →</a>
-        </div>
-    </div>
-</div>
-
-<script>
-(function(){
-    const overlay = document.getElementById('vv-modal-overlay');
-    const closeBtn = document.getElementById('vv-modal-close');
-
-    function openModal(btn) {
-        const name        = btn.dataset.name;
-        const tag         = btn.dataset.tag;
-        const image       = btn.dataset.image;
-        const engine      = btn.dataset.engine;
-        const mileage     = btn.dataset.mileage;
-        const seats       = btn.dataset.seats;
-        const trans       = btn.dataset.transmission;
-        const color       = btn.dataset.color;
-        const price       = btn.dataset.price;
-        const offer       = btn.dataset.offer;
-        const discount    = btn.dataset.discount;
-        const safety      = btn.dataset.safety;
-        const desc        = btn.dataset.desc;
-        const tagParts    = tag.split(' · ');
-
-        document.getElementById('vv-modal-name').textContent = name;
-        document.getElementById('vv-modal-tag').textContent  = tag;
-        document.getElementById('vv-modal-engine').textContent = engine;
-        document.getElementById('vv-modal-mileage').textContent = mileage > 0 ? mileage + ' km/l' : 'Electric';
-        document.getElementById('vv-modal-seats').textContent  = seats + ' Seater';
-        document.getElementById('vv-modal-trans').textContent  = trans;
-        document.getElementById('vv-modal-color').textContent  = color;
-        document.getElementById('vv-modal-fuel').textContent   = tagParts[1] || '';
-        document.getElementById('vv-modal-safety').textContent  = safety !== 'N/A' && safety ? safety + ' Stars' : 'N/A';
-
-        // Price
-        const offerEl  = document.getElementById('vv-modal-offer');
-        const origEl   = document.getElementById('vv-modal-orig');
-        const saveEl   = document.getElementById('vv-modal-saving');
-        if (offer) {
-            offerEl.textContent = offer;
-            origEl.textContent  = price;
-            origEl.style.display = 'inline';
-            saveEl.textContent   = discount;
-            saveEl.style.display = 'inline';
-        } else {
-            offerEl.textContent  = price;
-            origEl.style.display = 'none';
-            saveEl.style.display = 'none';
-        }
-
-        // Discount badge
-        const badge = document.getElementById('vv-modal-discount-badge');
-        if (discount) { badge.textContent = discount; badge.style.display = 'block'; }
-        else { badge.style.display = 'none'; }
-
-        // Image
-        const imgEl      = document.getElementById('vv-modal-img-el');
-        const placeholder = document.getElementById('vv-modal-img-placeholder');
-        if (image) {
-            imgEl.src = image; imgEl.style.display = 'block';
-            placeholder.style.display = 'none';
-        } else {
-            imgEl.style.display = 'none';
-            placeholder.style.display = 'flex';
-        }
-
-        // Description
-        const descWrap = document.getElementById('vv-modal-desc-wrap');
-        const descEl   = document.getElementById('vv-modal-desc');
-        if (desc) { descEl.textContent = desc; descWrap.style.display = 'block'; }
-        else { descWrap.style.display = 'none'; }
-
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-
-        // Fetch accessories and other details
-        const vehicleId = btn.dataset.id;
-        if (vehicleId) {
-            fetch(`/vehicle/${vehicleId}/detail/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.accessories && data.accessories.length > 0) {
-                        const accWrap = document.getElementById('vv-modal-accessory-wrap');
-                        const accContainer = document.getElementById('vv-modal-accessories');
-                        accContainer.innerHTML = '';
-                        
-                        data.accessories.forEach(acc => {
-                            const accCard = document.createElement('div');
-                            accCard.className = 'vv-acc-card';
-                            
-                            const imgSrc = acc.image || '{% static "images/placeholder.png" %}';
-                            accCard.innerHTML = `
-                                <div class="vv-acc-img-wrap">
-                                    <img src="${imgSrc}" alt="${acc.name}" class="vv-acc-img">
-                                </div>
-                                <div>
-                                    <p class="vv-acc-name">${acc.name}</p>
-                                    <p class="vv-acc-price">₹${acc.price}</p>
-                                </div>
-                            `;
-                            accContainer.appendChild(accCard);
-                        });
-                        accWrap.style.display = 'block';
-                    } else {
-                        document.getElementById('vv-modal-accessory-wrap').style.display = 'none';
-                    }
-                })
-                .catch(err => console.error('Error fetching accessories:', err));
-        }
-    }
-
-    function closeModal() {
-        overlay.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    document.querySelectorAll('.vv-details-btn').forEach(btn => {
-        btn.addEventListener('click', () => openModal(btn));
-    });
-
-    closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-})();
-</script>
 
 <section class="vv-features" id="features">
     <div class="vv-container">
@@ -618,29 +456,71 @@ document.getElementById('home-cmp-btn').addEventListener('click', function(){
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Other instances
-    new TomSelect("#home-v1", {
-        create: false,
-        sortField: { field: "text", direction: "asc" },
-        placeholder: "── Select Vehicle ──"
-    });
-    new TomSelect("#home-v2", {
-        create: false,
-        sortField: { field: "text", direction: "asc" },
-        placeholder: "── Select Vehicle ──"
+    // Unified Vehicle Detail Trigger via Delegation
+    document.addEventListener('click', function(e) {
+        const card = e.target.closest('.vv-car-card, .vv-ms-card');
+        if (card) {
+            // Don't trigger if clicking the save button or the details button (it will be handled or is already handled)
+            if (e.target.closest('.vv-save-vehicle-btn')) return;
+            
+            const btn = card.querySelector('.vv-details-btn');
+            if (btn && typeof window.openModal === 'function') {
+                window.openModal(btn);
+            }
+        }
     });
 
-    // Hero instances
-    new TomSelect("#hero-cmp-v1", {
-        create: false,
-        sortField: { field: "text", direction: "asc" },
-        placeholder: "Select First Car"
-    });
-    new TomSelect("#hero-cmp-v2", {
-        create: false,
-        sortField: { field: "text", direction: "asc" },
-        placeholder: "Select Second Car"
+    // Keyboard accessibility
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const card = e.target.closest('.vv-car-card, .vv-ms-card');
+            if (card) {
+                e.preventDefault();
+                card.click();
+            }
+        }
     });
 });
+
+// AJAX logic for saving vehicles
+document.addEventListener('click', function(e) {
+    const saveBtn = e.target.closest('.vv-save-vehicle-btn');
+    if (saveBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (saveBtn.dataset.auth !== "true") {
+            window.location.href = saveBtn.dataset.loginUrl;
+            return;
+        }
+        
+        const vehicleId = saveBtn.dataset.id;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        // Add tiny pulse animation
+        saveBtn.style.transform = "scale(0.9)";
+        setTimeout(() => saveBtn.style.transform = "scale(1)", 150);
+        
+        fetch(`/vehicle/api/save/${vehicleId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'saved') {
+                saveBtn.setAttribute('data-saved', 'true');
+                saveBtn.classList.add('vv-save-btn-active');
+            } else if (data.status === 'removed') {
+                saveBtn.setAttribute('data-saved', 'false');
+                saveBtn.classList.remove('vv-save-btn-active');
+            }
+        })
+        .catch(err => console.error('Error saving vehicle:', err));
+    }
+});
 </script>
+{% csrf_token %}
 {% endblock %}

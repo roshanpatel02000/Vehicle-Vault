@@ -1,7 +1,15 @@
-﻿{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Notification History - Vehicle Vault{% endblock %}
+
+{% block navbar %}
+{% include 'vehicle/user/usernavbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'vehicle/user/usersidebar.html' %}
+{% endblock %}
 
 {% block extra_css %}
 {% endblock %}

@@ -6,135 +6,8 @@
 {% block sidebar %}{% endblock %}
 
 {% block content %}
-<style>
-    .services-hero {
-        padding: 90px 24px;
-        text-align: center;
-        background: linear-gradient(to bottom, rgba(13, 15, 20, 0) 0%, rgba(255, 90, 0, 0.03) 100%);
-    }
 
-    .services-eyebrow {
-        display: inline-block;
-        padding: 5px 14px;
-        background: rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.5);
-        font-family: 'Inter', sans-serif;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        border-radius: 100px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
 
-    .services-hero h1 {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: clamp(2rem, 5vw, 3.8rem);
-        font-weight: 800;
-        color: #fff;
-        letter-spacing: -0.02em;
-        margin-bottom: 20px;
-    }
-
-    .services-hero-sub {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.05rem;
-        color: rgba(255, 255, 255, 0.5);
-        max-width: 600px;
-        margin: 0 auto;
-        line-height: 1.6;
-    }
-
-    .services-grid {
-        padding: 60px 24px 120px;
-        max-width: 1300px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-    }
-
-    .service-card {
-        background: #16181d;
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        border-radius: 28px;
-        padding: 45px;
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .service-card:hover {
-        transform: translateY(-8px);
-        background: #1a1d23;
-        border-color: rgba(255, 90, 0, 0.15);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-    }
-
-    .service-icon {
-        width: 56px;
-        height: 56px;
-        background: linear-gradient(135deg, rgba(255, 90, 0, 0.1), rgba(255, 90, 0, 0.05));
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #ff5a00;
-        margin-bottom: 5px;
-    }
-
-    .service-card h2 {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #fff;
-    }
-
-    .service-card p {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.95rem;
-        color: rgba(255, 255, 255, 0.4);
-        line-height: 1.6;
-        flex-grow: 1;
-    }
-
-    .service-link {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #ff5a00;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 10px;
-        transition: gap 0.2s;
-    }
-
-    .service-card:hover .service-link {
-        gap: 12px;
-    }
-
-    .service-card::after {
-        content: '';
-        position: absolute;
-        bottom: -20px;
-        right: -20px;
-        width: 100px;
-        height: 100px;
-        background: radial-gradient(circle, rgba(255, 90, 0, 0.05) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.4s;
-    }
-
-    .service-card:hover::after {
-        opacity: 1;
-    }
-</style>
 
 <div class="services-hero">
     <div class="services-eyebrow">Solutions & Features</div>
@@ -169,7 +42,7 @@
         </div>
         <h2>Accessory Suggestions</h2>
         <p>Enhance your driving experience with AI-powered accessory suggestions. Find the best parts and upgrades tailored specifically to your chosen vehicle.</p>
-        <a href="{% url 'accessories' %}" class="service-link">Shop Accessories <span>→</span></a>
+        <a href="{% url 'accessories' %}" class="service-link">View Accessories <span>→</span></a>
     </div>
 
     <div class="service-card">

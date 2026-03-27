@@ -1,14 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import F, Q
+from django.db.models import F, Q, Count, ExpressionWrapper, FloatField, DateTimeField, Max
+from django.db.models.functions import ExtractMonth, ExtractYear, TruncDate
 from decimal import Decimal
 import json
+import datetime
+import calendar
 
 from .decorators import role_required
-from .models import Vehicle, VehicleComparison
+from .models import Vehicle, VehicleComparison, SavedVehicle
 from accessory.models import Accessory, VehicleAccessoryMap
 
 
@@ -74,12 +77,24 @@ def homeView(request):
     most_searched_vehicles = Vehicle.objects.all().order_by('-search_count')
     all_vehicles      = Vehicle.objects.all().order_by('brand', 'model')
     vehicle_count     = Vehicle.objects.count()
-    return render(request, "home.html", {
-        'featured_vehicles': featured_vehicles,
-        'most_searched_vehicles': most_searched_vehicles,
+
+    most_searched_vehicles = list(most_searched_vehicles)
+
+    saved_vehicle_ids = []
+    if request.user.is_authenticated:
+        saved_vehicle_ids = list(SavedVehicle.objects.filter(user=request.user).values_list('vehicle_id', flat=True))
+
+    latest_comparisons = VehicleComparison.objects.all().order_by('-comparison_date')[:5]
+
+    context = {
         'all_vehicles': all_vehicles,
+        'most_searched_vehicles': most_searched_vehicles,
+        'featured_vehicles': featured_vehicles,
+        'latest_comparisons': latest_comparisons,
         'vehicle_count': vehicle_count,
-    })
+        'saved_vehicle_ids': saved_vehicle_ids,
+    }
+    return render(request, "home.html", context)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -113,7 +128,11 @@ def allVehiclesView(request):
     fuel_choices = Vehicle.FUEL_CHOICES
     body_choices = Vehicle.BODY_CHOICES
 
-    return render(request, "vehicle/all_vehicles.html", {
+    saved_vehicle_ids = []
+    if request.user.is_authenticated:
+        saved_vehicle_ids = list(SavedVehicle.objects.filter(user=request.user).values_list('vehicle_id', flat=True))
+
+    context = {
         'vehicles': vehicles,
         'vehicle_count': vehicles.count(),
         'fuel_choices': fuel_choices,
@@ -121,7 +140,9 @@ def allVehiclesView(request):
         'selected_fuel': fuel_type,
         'selected_body': body_type,
         'search_query': q,
-    })
+        'saved_vehicle_ids': saved_vehicle_ids,
+    }
+    return render(request, "vehicle/all_vehicles.html", context)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -460,29 +481,130 @@ def AdminDashboardView(request):
     from core.models import User
     from Notification.models import Notification
     from accessory.models import Accessory
-    
+
     total_users = User.objects.count()
     total_vehicles = Vehicle.objects.count()
     total_notifications = Notification.objects.count()
     total_accessories = Accessory.objects.count()
-    
+    total_comparisons = VehicleComparison.objects.count()
+
     context = {
         'total_users': total_users,
         'total_vehicles': total_vehicles,
         'total_notifications': total_notifications,
-        'total_accessories': total_accessories
+        'total_accessories': total_accessories,
+        'total_comparisons': total_comparisons,
     }
     return render(request, "vehicle/admin/Admin_dashboard.html", context)
+
+
+@login_required(login_url="login")
+@role_required(allowed_roles=["Admin"])
+def ComparisonStatsView(request):
+    from django.db.models import Count, Avg
+    from django.utils import timezone
+    import datetime
+
+    total_comparisons = VehicleComparison.objects.count()
+
+    today = timezone.now().date()
+    today_comparisons = VehicleComparison.objects.filter(
+        comparison_date__date=today
+    ).count()
+
+    this_week = today - datetime.timedelta(days=6)
+    week_comparisons = VehicleComparison.objects.filter(
+        comparison_date__date__gte=this_week
+    ).count()
+
+    avg_similarity = VehicleComparison.objects.filter(
+        similarity_score__isnull=False
+    ).aggregate(avg=Avg('similarity_score'))['avg']
+    avg_similarity = round(float(avg_similarity), 1) if avg_similarity else 0
+
+    # Most recommended vehicle (best_vehicle field)
+    from django.db.models import Count as DCount
+    top_recommended = (
+        VehicleComparison.objects
+        .exclude(best_vehicle__isnull=True)
+        .exclude(best_vehicle__exact='')
+        .exclude(best_vehicle__startswith='Both')
+        .values('best_vehicle')
+        .annotate(times=DCount('id'))
+        .order_by('-times')
+        .first()
+    )
+
+    # All comparisons
+    recent_comparisons = VehicleComparison.objects.select_related(
+        'vehicle1', 'vehicle2', 'compared_by'
+    ).order_by('-comparison_date')
+
+    # Most compared vehicle pairs (top 5)
+    context = {
+        'total_comparisons': total_comparisons,
+        'today_comparisons': today_comparisons,
+        'week_comparisons': week_comparisons,
+        'avg_similarity': avg_similarity,
+        'top_recommended': top_recommended,
+        'recent_comparisons': recent_comparisons,
+    }
+    return render(request, "vehicle/admin/comparison_stats.html", context)
 
 
 @login_required(login_url="login")
 @role_required(allowed_roles=["User"])
 def UserDashboardView(request):
     from Notification.models import UserNotification
+    from vehicle.models import VehicleComparison, SavedVehicle
+    from accessory.models import FavouriteAccessory
+
     unread_notifications = UserNotification.objects.filter(user=request.user, is_read=False).count()
+    total_comparisons = VehicleComparison.objects.filter(compared_by=request.user).count()
+    total_saved_vehicles = SavedVehicle.objects.filter(user=request.user).count()
+    total_favourite_accessories = FavouriteAccessory.objects.filter(user=request.user).count()
+
+    recent_comparisons = VehicleComparison.objects.filter(compared_by=request.user).select_related(
+        'vehicle1', 'vehicle2', 'compared_by'
+    ).order_by('-comparison_date')[:10]
+
     return render(request, "vehicle/user/User_dashboard.html", {
-        'total_notifications': unread_notifications
+        'total_notifications': unread_notifications,
+        'total_comparisons': total_comparisons,
+        'total_saved_vehicles': total_saved_vehicles,
+        'total_favourite_accessories': total_favourite_accessories,
+        'recent_comparisons': recent_comparisons,
     })
+
+@login_required(login_url="login")
+def savedVehiclesView(request):
+    """Display the vehicles saved by the user."""
+    saved_vehicle_objs = SavedVehicle.objects.filter(user=request.user).select_related('vehicle').order_by('-saved_at')
+    saved_vehicles = [obj.vehicle for obj in saved_vehicle_objs]
+    
+    # Also pass saved_vehicle_ids so the heart icon can be rendered as active
+    saved_vehicle_ids = [v.id for v in saved_vehicles]
+    
+    return render(request, 'vehicle/user/saved_vehicles.html', {
+        'saved_vehicles': saved_vehicles,
+        'saved_vehicle_ids': saved_vehicle_ids,
+    })
+
+@login_required(login_url="login")
+@require_POST
+def toggle_save_vehicle(request, vehicle_id):
+    """Toggle save status of a vehicle for the logged-in user."""
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    saved_obj = SavedVehicle.objects.filter(user=request.user, vehicle=vehicle).first()
+    
+    if saved_obj:
+        saved_obj.delete()
+        status = 'removed'
+    else:
+        SavedVehicle.objects.create(user=request.user, vehicle=vehicle)
+        status = 'saved'
+        
+    return JsonResponse({'status': status})
 
 # ─── Admin Approvals ────────────────────────────────────────────────────────
 @login_required(login_url="login")

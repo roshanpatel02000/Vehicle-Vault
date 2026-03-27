@@ -1,0 +1,159 @@
+<!-- ===== VEHICLE DETAIL MODAL GLOBAL PARTIAL ===== -->
+<div id="vv-modal-overlay" class="vv-modal-overlay">
+    <div id="vv-modal" class="vv-modal">
+        <!-- Close Button -->
+        <button id="vv-modal-close" class="vv-modal-close" aria-label="Close Modal">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        <!-- Dynamic Content Header -->
+        <div id="vv-modal-img-container" class="vv-modal-img-container">
+            <img id="vv-modal-img-el" src="" alt="" class="vv-modal-img-el">
+            <div id="vv-modal-img-placeholder" class="vv-modal-img-placeholder">
+                <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+            </div>
+            <div class="vv-modal-img-overlay"></div>
+            <div class="vv-modal-header-text">
+                <p id="vv-modal-tag" class="vv-modal-tag"></p>
+                <h2 id="vv-modal-name" class="vv-modal-title"></h2>
+            </div>
+            <div id="vv-modal-discount-badge" class="vv-modal-discount-badge"></div>
+        </div>
+
+        <!-- Scrollable Modal Body -->
+        <div class="vv-modal-body">
+            <!-- Price Block -->
+            <div class="vv-modal-price-row">
+                <span id="vv-modal-offer" class="vv-modal-offer-price"></span>
+                <span id="vv-modal-orig" class="vv-modal-orig-price"></span>
+                <span id="vv-modal-saving" class="vv-modal-saving-badge"></span>
+            </div>
+
+            <!-- Specs Grid -->
+            <div class="vv-modal-specs-grid">
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20v-20zM17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span><div><p class="vv-spec-label">Engine</p><p id="vv-modal-engine" class="vv-spec-val"></p></div></div>
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span><div><p class="vv-spec-label">Mileage</p><p id="vv-modal-mileage" class="vv-spec-val"></p></div></div>
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><p class="vv-spec-label">Seating</p><p id="vv-modal-seats" class="vv-spec-val"></p></div></div>
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><p class="vv-spec-label">Transmission</p><p id="vv-modal-trans" class="vv-spec-val"></p></div></div>
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><p class="vv-spec-label">Fuel Type</p><p id="vv-modal-fuel" class="vv-spec-val"></p></div></div>
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></span><div><p class="vv-spec-label">Color</p><p id="vv-modal-color" class="vv-spec-val"></p></div></div>
+                <div class="vv-spec-pill"><span class="vv-spec-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><div><p class="vv-spec-label">Safety Rating</p><p id="vv-modal-safety" class="vv-spec-val"></p></div></div>
+            </div>
+
+            <!-- Description Block -->
+            <div id="vv-modal-desc-wrap" class="vv-modal-desc-card">
+                <p class="vv-modal-section-title">About this vehicle</p>
+                <p id="vv-modal-desc" class="vv-modal-desc-text"></p>
+            </div>
+
+            <!-- Global CTA -->
+            <a href="/signup/" class="vv-modal-cta-btn">Create Account to Book →</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+(function(){
+    // Standardized global Modal Trigger
+    window.openModal = function(btn) {
+        if (!btn) return;
+        const overlay = document.getElementById('vv-modal-overlay');
+        if (!overlay) return;
+
+        // Extract data
+        const data = btn.dataset;
+        const name        = data.name;
+        const tag         = data.tag;
+        const image       = data.image;
+        const engine      = data.engine;
+        const mileage     = data.mileage;
+        const seats       = data.seats;
+        const trans       = data.transmission;
+        const color       = data.color;
+        const price       = data.price;
+        const offer       = data.offer;
+        const discount    = data.discount;
+        const safety      = data.safety;
+        const desc        = data.desc;
+        const tagParts    = tag ? tag.split(' · ') : [];
+
+        // Fill content
+        document.getElementById('vv-modal-name').textContent = name || 'Vehicle Detail';
+        document.getElementById('vv-modal-tag').textContent  = tag || '';
+        document.getElementById('vv-modal-engine').textContent = engine || 'N/A';
+        document.getElementById('vv-modal-mileage').textContent = mileage && mileage > 0 ? mileage + ' km/l' : 'N/A';
+        document.getElementById('vv-modal-seats').textContent  = (seats || '-') + ' Seater';
+        document.getElementById('vv-modal-trans').textContent  = trans || 'Manual';
+        document.getElementById('vv-modal-color').textContent  = color || 'N/A';
+        document.getElementById('vv-modal-fuel').textContent   = tagParts[1] || 'Petrol';
+        document.getElementById('vv-modal-safety').textContent  = safety && safety !== 'N/A' ? safety + ' Stars' : 'N/A';
+
+        // Price Logic
+        const offerEl  = document.getElementById('vv-modal-offer');
+        const origEl   = document.getElementById('vv-modal-orig');
+        const saveEl   = document.getElementById('vv-modal-saving');
+        
+        if (offer && offer.trim() !== "") {
+            offerEl.textContent = offer;
+            origEl.textContent  = price;
+            origEl.style.display = 'inline';
+            saveEl.textContent   = discount || '';
+            saveEl.style.display = discount ? 'inline' : 'none';
+        } else {
+            offerEl.textContent  = price;
+            origEl.style.display = 'none';
+            saveEl.style.display = 'none';
+        }
+
+        // Image & Badges
+        const badge = document.getElementById('vv-modal-discount-badge');
+        if (discount) { badge.textContent = discount; badge.style.display = 'block'; }
+        else { badge.style.display = 'none'; }
+
+        const imgEl      = document.getElementById('vv-modal-img-el');
+        const placeholder = document.getElementById('vv-modal-img-placeholder');
+        if (image && image !== "") {
+            imgEl.src = image; 
+            imgEl.style.display = 'block';
+            placeholder.style.display = 'none';
+        } else {
+            imgEl.style.display = 'none';
+            placeholder.style.display = 'flex';
+        }
+
+        const descWrap = document.getElementById('vv-modal-desc-wrap');
+        const descEl   = document.getElementById('vv-modal-desc');
+        if (desc && desc.trim() !== "") {
+            descEl.textContent = desc; 
+            descWrap.style.display = 'block';
+        } else {
+            descWrap.style.display = 'none';
+        }
+
+        // Show Modal
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeModal = function() {
+        const overlay = document.getElementById('vv-modal-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    };
+
+    // Event Listeners for closing
+    document.addEventListener("DOMContentLoaded", function() {
+        const overlay = document.getElementById('vv-modal-overlay');
+        const closeBtn = document.getElementById('vv-modal-close');
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    });
+})();
+</script>

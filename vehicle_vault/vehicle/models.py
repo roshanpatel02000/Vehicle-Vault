@@ -106,3 +106,25 @@ class VehicleComparison(models.Model):
 
     def __str__(self):
         return f"{self.vehicle1} vs {self.vehicle2} ({self.comparison_date.strftime('%d %b %Y')})"
+
+class SavedVehicle(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='saved_vehicles'
+    )
+    vehicle = models.ForeignKey(
+        Vehicle,
+        on_delete=models.CASCADE,
+        related_name='saved_by_users'
+    )
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'vehicle')
+        ordering = ['-saved_at']
+        verbose_name = 'Saved Vehicle'
+        verbose_name_plural = 'Saved Vehicles'
+
+    def __str__(self):
+        return f"{self.user} saved {self.vehicle}"

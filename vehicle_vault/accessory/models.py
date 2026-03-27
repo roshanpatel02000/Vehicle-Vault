@@ -29,3 +29,27 @@ class VehicleAccessoryMap(models.Model):
 
     def __str__(self):
         return f"{self.vehicle} - {self.accessory}"
+
+from django.conf import settings
+
+class FavouriteAccessory(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favourite_accessories'
+    )
+    accessory = models.ForeignKey(
+        Accessory,
+        on_delete=models.CASCADE,
+        related_name='favourited_by_users'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'accessory')
+        ordering = ['-created_at']
+        verbose_name = 'Favourite Accessory'
+        verbose_name_plural = 'Favourite Accessories'
+
+    def __str__(self):
+        return f"{self.user} favourited {self.accessory}"

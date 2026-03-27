@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from vehicle.decorators import role_required
 from .forms import AccessoryForm
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 def accessoryListView(request):
     accessories = Accessory.objects.filter(availability=True)
@@ -41,7 +43,50 @@ def accessoryListView(request):
         'categories': [c for c in categories if c], # clean up empty strings just in case
         'brands': brands,
     }
+    
+    # Pass favourited accessory IDs if user is logged in
+    if request.user.is_authenticated:
+        from .models import FavouriteAccessory
+        favourite_ids = FavouriteAccessory.objects.filter(user=request.user).values_list('accessory_id', flat=True)
+        context['favourite_accessory_ids'] = list(favourite_ids)
+    
     return render(request, 'accessories.html', context)
+
+# --- User Views ---
+
+@login_required(login_url="login")
+@require_POST
+def toggle_favourite_accessory(request, accessory_id):
+    """Toggle favourite status of an accessory for the logged-in user."""
+    from .models import FavouriteAccessory
+    
+    accessory = get_object_or_404(Accessory, id=accessory_id)
+    favourite, created = FavouriteAccessory.objects.get_or_create(
+        user=request.user,
+        accessory=accessory
+    )
+    
+    if not created:
+        favourite.delete()
+        return JsonResponse({'status': 'removed'})
+    
+    return JsonResponse({'status': 'saved'})
+
+@login_required(login_url="login")
+def favouriteAccessoriesView(request):
+    """Display the accessories favourited by the user."""
+    from .models import FavouriteAccessory
+    
+    favourite_objs = FavouriteAccessory.objects.filter(user=request.user).select_related('accessory').order_by('-created_at')
+    favourite_accessories = [obj.accessory for obj in favourite_objs]
+    
+    # Also pass favourite_accessory_ids so the heart icon can be rendered as active
+    favourite_accessory_ids = [a.id for a in favourite_accessories]
+    
+    return render(request, 'accessory/user/favourite_accessories.html', {
+        'favourite_accessories': favourite_accessories,
+        'favourite_accessory_ids': favourite_accessory_ids,
+    })
 
 # --- Admin Views ---
 

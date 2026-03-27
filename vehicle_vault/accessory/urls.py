@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.accessoryListView, name='accessories'),
+    path("api/favourite/<int:accessory_id>/", views.toggle_favourite_accessory, name="toggle_favourite_accessory"),
+    path("favourite-accessories/", views.favouriteAccessoriesView, name="favourite_accessories"),
     
     # Admin Management
     path('manage/', views.admin_manage_accessories, name='admin_manage_accessories'),

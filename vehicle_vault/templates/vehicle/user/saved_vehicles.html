@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saved Vehicles ── Vehicle Vault{% endblock %}
+
+{% block navbar %}
+{% include 'vehicle/user/usernavbar.html' %}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'vehicle/user/usersidebar.html' %}
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="dashboard-wrapper vv-dashboard-wrapper">
+    <!-- Header -->
+    <div class="dashboard-header vv-dashboard-header">
+        <h1 class="dashboard-title">Saved Vehicles<span class="accent-dot">.</span></h1>
+        <p class="dashboard-subtitle">Vehicles you have saved for later.</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="av-grid" id="av-grid">
+        {% for v in saved_vehicles %}
+        <div class="av-card" data-id="{{ v.pk }}">
+            <div class="av-card-img-wrap">
+                {% if v.get_display_image %}
+                <img src="{{ v.get_display_image }}" alt="{{ v.brand }} {{ v.model }}" loading="lazy">
+                {% else %}
+                <div class="vv-img-placeholder-sm">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                {% endif %}
+                
+                <div class="av-card-badges">
+                    {% if v.discount_percentage %}
+                    <span class="av-badge av-badge-featured">{{ v.discount_percentage }}% OFF</span>
+                    {% elif v.is_featured %}
+                    <span class="av-badge av-badge-featured">FEATURED</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="av-card-body">
+                <span class="av-card-brand">{{ v.body_type|default:"Vehicle" }} · {{ v.fuel_type }}</span>
+                <h3 class="av-card-name" title="{{ v.brand }} {{ v.model }}{% if v.variant %} {{ v.variant }}{% endif %}">{{ v.brand }} {{ v.model }}{% if v.variant %} {{ v.variant }}{% endif %}</h3>
+                
+                <div class="av-card-specs">
+                    <div class="av-spec-chip"><span>{{ v.engine|default:"-" }}</span></div>
+                    <div class="av-spec-chip"><span>{{ v.seating_capacity|default:"-" }} {% if v.seating_capacity %}Seats{% endif %}</span></div>
+                    <div class="av-spec-chip"><span>{{ v.transmission|default:"-" }}</span></div>
+                </div>
+
+                <div class="av-card-footer">
+                    <!-- Down Left: Save Button -->
+                    <div style="display:flex; justify-content: flex-start;">
+                        <button class="vv-save-btn vv-save-vehicle-btn vv-save-btn-active" data-id="{{ v.id }}" data-saved="true" title="Unsave Vehicle">
+                            <svg class="heart-icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Down Middle: View Details -->
+                    <button class="vv-details-btn"
+                        data-image="{{ v.get_display_image }}"
+                        data-name="{{ v.brand }} {{ v.model }}{% if v.variant %} {{ v.variant }}{% endif %}"
+                        data-tag="{{ v.body_type|default:'Vehicle' }} · {{ v.fuel_type }}"
+                        data-engine="{{ v.engine }}"
+                        data-mileage="{{ v.mileage }}"
+                        data-seats="{{ v.seating_capacity }}"
+                        data-transmission="{{ v.transmission }}"
+                        data-color="{{ v.color|default:'N/A' }}"
+                        data-price="₹{{ v.price|floatformat:0 }}"
+                        data-offer="{% if v.offer_price %}₹{{ v.offer_price|floatformat:0 }}{% endif %}"
+                        data-discount="{% if v.discount_percentage %}{{ v.discount_percentage }}% OFF{% endif %}"
+                        data-safety="{{ v.safety_rating|default:'N/A' }}"
+                        data-desc="{{ v.description|default:''|escapejs }}"
+                    >View Details</button>
+
+                    <!-- Down Right: Price Block -->
+                    <div class="av-price-block">
+                        {% if v.offer_price %}
+                        <div class="av-discount-badge">{{ v.discount_percentage }}% OFF</div>
+                        <div class="av-offer-price price-fmt">₹{{ v.offer_price|floatformat:0 }}</div>
+                        <div class="av-orig-price price-fmt">₹{{ v.price|floatformat:0 }}</div>
+                        {% else %}
+                        <div class="av-discount-badge" style="visibility:hidden;">0% OFF</div>
+                        <div class="av-main-price price-fmt">₹{{ v.price|floatformat:0 }}</div>
+                        <div class="av-orig-price price-fmt" style="visibility:hidden;">0</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="vv-empty-state-inline">
+            <p class="vv-empty-state-text">You haven't saved any vehicles yet.</p>
+            <a href="{% url 'all_vehicles' %}" class="vv-empty-state-btn">Browse Inventory</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% csrf_token %}
+
+<script>
+// AJAX logic for saving vehicles
+document.addEventListener('click', function(e) {
+    const saveBtn = e.target.closest('.vv-save-vehicle-btn');
+    if (saveBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const vehicleId = saveBtn.dataset.id;
+        
+        saveBtn.style.transform = "scale(0.9)";
+        setTimeout(() => saveBtn.style.transform = "scale(1)", 150);
+        
+        fetch(`/vehicle/api/save/${vehicleId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'removed') {
+                // If on the saved vehicles page, remove the card entirely
+                const card = saveBtn.closest('.av-card');
+                if (card) {
+                    card.style.transition = "opacity 0.3s, transform 0.3s";
+                    card.style.opacity = "0";
+                    card.style.transform = "scale(0.95)";
+                    setTimeout(() => card.remove(), 300);
+                }
+            }
+        })
+        .catch(err => console.error('Error unsaving vehicle:', err));
+    }
+});
+
+// Modal Trigger
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.av-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            // Don't trigger if clicking the save/unsave button
+            if (e.target.closest('.vv-save-vehicle-btn')) return;
+            
+            const btn = card.querySelector('.vv-details-btn');
+            if (btn && typeof window.openModal === 'function') {
+                window.openModal(btn);
+            }
+        });
+        
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+        });
+    });
+});
+</script>
+{% endblock %}
