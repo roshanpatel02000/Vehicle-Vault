@@ -153,6 +153,22 @@
 
                 </div>
 
+                <!-- View All in Inventory -->
+
+                <div class="nsp-viewall-row" id="nsp-viewall-row" style="display:none;">
+
+                    <a href="#" id="nsp-viewall-link" class="nsp-viewall-btn">
+
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
+                        View all results in inventory
+
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;"><polyline points="9 18 15 12 9 6"/></svg>
+
+                    </a>
+
+                </div>
+
             </div>
 
         </div>
@@ -808,7 +824,7 @@
 
         if (!query && !activeFuel && !minPriceInput.value && !maxPriceInput.value) {
 
-            if (isDesktop) { setState('hint'); }
+            if (isDesktop) { setState('hint'); updateViewAllRow(); }
 
             else { targetResults.innerHTML = ''; }
 
@@ -864,6 +880,8 @@
 
                 if (isDesktop && results.innerHTML) empty.classList.remove('active');
 
+                if (isDesktop) updateViewAllRow();
+
             })
 
             .catch(() => {
@@ -871,6 +889,60 @@
                 if (isDesktop) setState('empty');
 
             });
+
+    }
+
+
+
+    /* ── Build inventory URL from current search state ──────── */
+
+    function buildInventoryUrl() {
+
+        const params = new URLSearchParams();
+
+        const q = searchInput.value.trim();
+
+        if (q) params.set('q', q);
+
+        if (activeFuel) params.set('fuel', activeFuel);
+
+        // Convert Lakhs → full rupees
+
+        if (minPriceInput.value) params.set('min_price', Math.round(parseFloat(minPriceInput.value) * 100000));
+
+        if (maxPriceInput.value) params.set('max_price', Math.round(parseFloat(maxPriceInput.value) * 100000));
+
+        return '/vehicles/?' + params.toString();
+
+    }
+
+
+
+    function navigateToInventory() {
+
+        window.location.href = buildInventoryUrl();
+
+    }
+
+
+
+    /* ── Show/hide View All row ─────────────────────────────── */
+
+    const viewAllRow  = document.getElementById('nsp-viewall-row');
+
+    const viewAllLink = document.getElementById('nsp-viewall-link');
+
+
+
+    function updateViewAllRow() {
+
+        const hasFilters = searchInput.value.trim() || activeFuel || minPriceInput.value || maxPriceInput.value;
+
+        if (!viewAllRow) return;
+
+        viewAllRow.style.display = hasFilters ? 'block' : 'none';
+
+        if (viewAllLink) viewAllLink.href = buildInventoryUrl();
 
     }
 
@@ -897,6 +969,20 @@
         popup.classList.add('active');
 
         triggerSearch(true);
+
+    });
+
+
+
+    searchInput.addEventListener('keydown', function(e) {
+
+        if (e.key === 'Enter') {
+
+            e.preventDefault();
+
+            navigateToInventory();
+
+        }
 
     });
 
@@ -930,6 +1016,8 @@
 
         setState('hint');
 
+        updateViewAllRow();
+
         searchInput.focus();
 
     });
@@ -960,6 +1048,8 @@
 
             triggerSearch(true);
 
+            updateViewAllRow();
+
         });
 
     });
@@ -970,17 +1060,23 @@
 
     [minPriceInput, maxPriceInput].forEach(inp => {
 
-        inp.addEventListener('input', () => triggerSearch(true));
+        inp.addEventListener('input', () => { triggerSearch(true); updateViewAllRow(); });
 
     });
 
 
 
-    // Mobile search
+    // Mobile search — Enter navigates to inventory
 
     mobileInput.addEventListener('input', function() {
 
         triggerSearch(false);
+
+    });
+
+    mobileInput.addEventListener('keydown', function(e) {
+
+        if (e.key === 'Enter') { e.preventDefault(); navigateToInventory(); }
 
     });
 

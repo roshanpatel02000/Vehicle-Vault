@@ -109,7 +109,7 @@
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <span style="font-size: 13px; font-weight: 700; color: #fff; min-width: 45px;">{{ c.similarity_score|default:"0" }}%</span>
                                     <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; min-width: 50px;">
-                                        <div style="height: 100%; width: {{ c.similarity_score|default:0 }}%; background: linear-gradient(90deg, #ff5a00, #ff9a44); border-radius: 10px;"></div>
+                                        <div class="score-bar" data-width="{{ c.similarity_score|default:0 }}%" style="height: 100%; background: linear-gradient(90deg, #ff5a00, #ff9a44); border-radius: 10px;"></div>
                                     </div>
                                 </div>
                             </td>
@@ -142,6 +142,15 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Apply data-width via JS to avoid inline CSS validation errors -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.score-bar').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width');
+            });
+        });
+    </script>
 
 </div>
 {% endblock %}

@@ -46,8 +46,6 @@
                 <p id="vv-modal-desc" class="vv-modal-desc-text"></p>
             </div>
 
-            <!-- Global CTA -->
-            <a href="/signup/" class="vv-modal-cta-btn">Create Account to Book →</a>
         </div>
     </div>
 </div>
@@ -64,7 +62,7 @@
         if (!overlay) return;
 
         // Extract data
-        const data = btn.dataset;
+        const isAcc       = data.type === 'accessory';
         const name        = data.name;
         const tag         = data.tag;
         const image       = data.image;
@@ -81,15 +79,22 @@
         const tagParts    = tag ? tag.split(' · ') : [];
 
         // Fill content
-        document.getElementById('vv-modal-name').textContent = name || 'Vehicle Detail';
+        document.getElementById('vv-modal-name').textContent = name || 'Detail';
         document.getElementById('vv-modal-tag').textContent  = tag || '';
-        document.getElementById('vv-modal-engine').textContent = engine || 'N/A';
-        document.getElementById('vv-modal-mileage').textContent = mileage && mileage > 0 ? mileage + ' km/l' : 'N/A';
-        document.getElementById('vv-modal-seats').textContent  = (seats || '-') + ' Seater';
-        document.getElementById('vv-modal-trans').textContent  = trans || 'Manual';
-        document.getElementById('vv-modal-color').textContent  = color || 'N/A';
-        document.getElementById('vv-modal-fuel').textContent   = tagParts[1] || 'Petrol';
-        document.getElementById('vv-modal-safety').textContent  = safety && safety !== 'N/A' ? safety + ' Stars' : 'N/A';
+        
+        const specsGrid = document.querySelector('.vv-modal-specs-grid');
+        if (isAcc) {
+            specsGrid.style.display = 'none';
+        } else {
+            specsGrid.style.display = 'grid';
+            document.getElementById('vv-modal-engine').textContent = engine || 'N/A';
+            document.getElementById('vv-modal-mileage').textContent = mileage && mileage > 0 ? mileage + ' km/l' : 'N/A';
+            document.getElementById('vv-modal-seats').textContent  = (seats || '-') + ' Seater';
+            document.getElementById('vv-modal-trans').textContent  = trans || 'Manual';
+            document.getElementById('vv-modal-color').textContent  = color || 'N/A';
+            document.getElementById('vv-modal-fuel').textContent   = tagParts[1] || 'Petrol';
+            document.getElementById('vv-modal-safety').textContent  = safety && safety !== 'N/A' ? safety + ' Stars' : 'N/A';
+        }
 
         // Price Logic
         const offerEl  = document.getElementById('vv-modal-offer');

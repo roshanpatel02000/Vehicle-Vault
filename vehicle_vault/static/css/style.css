@@ -903,7 +903,7 @@ select option { background: #1a1d23; color: #ffffff; }
 .av-card-img-placeholder svg { opacity: 0.25; }
 .av-card-badges { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
 .av-badge { padding: 5px 10px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-.av-badge-featured      { background: rgba(255,90,0,0.2);   color: #ff8040; border: 1px solid rgba(255,90,0,0.3); }
+.av-badge-featured      { background: linear-gradient(135deg, rgba(255,90,0,0.15), rgba(255,154,68,0.15)); color: #ff8040; border: 1px solid rgba(255,90,0,0.25); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .av-badge-fuel-petrol   { background: rgba(255,90,0,0.15);  color: #ff8040; }
 .av-badge-fuel-diesel   { background: rgba(255,193,7,0.15); color: #ffc107; }
 .av-badge-fuel-electric { background: rgba(0,230,118,0.15); color: #00e676; }
@@ -1578,6 +1578,9 @@ select option { background: #1a1d23; color: #ffffff; }
 .nsp-mobile-results .nsp-card { padding: 10px; }
 .nsp-card-arrow { font-size: 1.1rem; color: rgba(255,255,255,0.2); flex-shrink: 0; transition: color 0.18s, transform 0.18s; margin-left: 4px; }
 .nsp-card:hover .nsp-card-arrow { color: #6236ff; transform: translateX(3px); }
+.nsp-viewall-row { margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.07); }
+.nsp-viewall-btn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 12px; border-radius: 10px; background: rgba(255,90,0,0.07); border: 1px solid rgba(255,90,0,0.2); color: #ff8040; font-size: 0.82rem; font-weight: 700; text-decoration: none; transition: background 0.18s, border-color 0.18s, transform 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.01em; }
+.nsp-viewall-btn:hover { background: rgba(255,90,0,0.14); border-color: rgba(255,90,0,0.4); color: #ff5a00; transform: translateX(3px); }
 
 /* ==========================================
    NAVBAR — VEHICLE DETAIL MODAL
@@ -2523,8 +2526,7 @@ body.home-page { padding-top: 0 !important; }
 .vv-modal-section-title { font-family:'Inter', sans-serif; font-size:11px; font-weight:800; color:#ff5a00; text-transform:uppercase; margin-bottom:14px; letter-spacing:0.1em; }
 .vv-modal-desc-text { font-family:'Inter', sans-serif; font-size:15px; color:rgba(255,255,255,0.5); line-height:1.7; margin:0; }
 
-.vv-modal-cta-btn { display:block; width:100%; text-align:center; background:linear-gradient(135deg,#ff5a00,#ff7b33); color:#fff; font-family:'Plus Jakarta Sans', sans-serif; font-size:14px; font-weight:800; padding:18px; border-radius:16px; box-shadow:0 10px 30px rgba(255,90,0,0.3); transition:all 0.3s; text-decoration:none; }
-.vv-modal-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(255,90,0,0.45); }
+
 
 /* ==========================================
    UTILITY CLASSES — Inline Style Replacements
@@ -2581,12 +2583,16 @@ body.home-page { padding-top: 0 !important; }
 }
 
 .vv-save-btn-circular { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
-.vv-fav-btn-inline { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+.vv-fav-btn-inline { width: auto !important; height: auto !important; display: flex; align-items: center; gap: 8px; padding: 10px 22px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: #fff; letter-spacing: 0.02em; }
+.vv-save-btn.vv-fav-btn-inline[data-saved="true"] { background: linear-gradient(135deg, #ff5a00, #ff7b33) !important; border-color: transparent !important; color: #ffffff !important; box-shadow: 0 8px 24px rgba(255,90,0,0.35) !important; transform: translateY(-2px); }
+.vv-save-btn.vv-fav-btn-inline[data-saved="true"] .heart-icon { fill: rgba(255,255,255,0.3) !important; }
+.vv-save-btn.vv-fav-btn-inline:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 .vv-empty-state-inline { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
 .vv-empty-state-text { color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 20px; }
 .vv-empty-state-btn { display: inline-block; padding: 12px 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-weight: 600; text-decoration: none; transition: 0.2s; }
 .vv-empty-message { color: #9ca3af; text-align: center; padding: 40px 0; width: 100%; }
-.vv-price-orig { text-decoration: line-through; opacity: 0.7; }
+.vv-price-offer { color: #22c55e; font-weight: 700; }
+.vv-price-orig { text-decoration: line-through; color: #ef4444; opacity: 0.8; }
 .hsc-vs-badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; background: linear-gradient(135deg, #ff5a00, #ff7b33); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; border: 3px solid rgba(13,15,20,0.55); z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 .hsc-compare-desc { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px; line-height: 1.6; }
 .vv-compare-desc-text { font-family: 'Inter', sans-serif; font-size: 15px; color: #6b7280; text-align: center; margin-bottom: 40px; }

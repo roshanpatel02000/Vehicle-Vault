@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from vehicle.models import Vehicle
 
 class Accessory(models.Model):
@@ -29,8 +30,6 @@ class VehicleAccessoryMap(models.Model):
 
     def __str__(self):
         return f"{self.vehicle} - {self.accessory}"
-
-from django.conf import settings
 
 class FavouriteAccessory(models.Model):
     user = models.ForeignKey(

@@ -12,7 +12,7 @@ import calendar
 
 from .decorators import role_required
 from .models import Vehicle, VehicleComparison, SavedVehicle
-from accessory.models import Accessory, VehicleAccessoryMap
+from accessory.models import Accessory, VehicleAccessoryMap, FavouriteAccessory
 
 
 def _run_comparison(v1, v2):
@@ -25,16 +25,16 @@ def _run_comparison(v1, v2):
         mx = max(abs(a), abs(b))
         return 1.0 if mx == 0 else 1.0 - abs(a - b) / mx
 
-    score_points, total_points = 0, 0
+    score_points, total_points = 0.0, 0.0
     for pair in [(v1.fuel_type, v2.fuel_type), (v1.transmission, v2.transmission), (v1.body_type or '', v2.body_type or '')]:
-        score_points += cat_match(*pair); total_points += 1
+        score_points += cat_match(*pair); total_points += 1.0
     for a, b in [(v1.price, v2.price), (v1.mileage, v2.mileage), (v1.seating_capacity, v2.seating_capacity)]:
-        score_points += numeric_closeness(a, b); total_points += 1
-    similarity_score = round((score_points / total_points) * 100, 2)
+        score_points += numeric_closeness(a, b); total_points += 1.0
+    similarity_score = round(float((score_points / total_points) * 100.0), 2) if total_points > 0.0 else 0.0
 
     def vehicle_score(v):
         price_val   = float(v.offer_price if v.offer_price else v.price)
-        price_score = max(0, 1 - price_val / 10_000_000)
+        price_score = max(0.0, 1.0 - price_val / 10_000_000.0)
         mil         = float(v.mileage)
         mileage_score = (mil / 40.0) if mil > 0 else 0.5
         disc_score  = (float(v.discount_percentage) / 100.0) if v.discount_percentage else 0.0
@@ -74,6 +74,8 @@ def _run_comparison(v1, v2):
 # ──────────────────────────────────────────────────────────────────────────────
 def homeView(request):
     featured_vehicles = Vehicle.objects.filter(is_featured=True).order_by('-created_at')
+    electric_vehicles = Vehicle.objects.filter(fuel_type='Electric').order_by('-created_at')
+    featured_accessories = Accessory.objects.filter(availability=True).order_by('-created_at')[:8]
     most_searched_vehicles = Vehicle.objects.all().order_by('-search_count')
     all_vehicles      = Vehicle.objects.all().order_by('brand', 'model')
     vehicle_count     = Vehicle.objects.count()
@@ -81,8 +83,10 @@ def homeView(request):
     most_searched_vehicles = list(most_searched_vehicles)
 
     saved_vehicle_ids = []
+    favourite_accessory_ids = []
     if request.user.is_authenticated:
         saved_vehicle_ids = list(SavedVehicle.objects.filter(user=request.user).values_list('vehicle_id', flat=True))
+        favourite_accessory_ids = list(FavouriteAccessory.objects.filter(user=request.user).values_list('accessory_id', flat=True))
 
     latest_comparisons = VehicleComparison.objects.all().order_by('-comparison_date')[:5]
 
@@ -90,9 +94,12 @@ def homeView(request):
         'all_vehicles': all_vehicles,
         'most_searched_vehicles': most_searched_vehicles,
         'featured_vehicles': featured_vehicles,
+        'electric_vehicles': electric_vehicles,
+        'featured_accessories': featured_accessories,
         'latest_comparisons': latest_comparisons,
         'vehicle_count': vehicle_count,
         'saved_vehicle_ids': saved_vehicle_ids,
+        'favourite_accessory_ids': favourite_accessory_ids,
     }
     return render(request, "home.html", context)
 
@@ -102,9 +109,12 @@ def allVehiclesView(request):
     """Browse all vehicles page with optional filters."""
     from django.db.models import Q
 
-    q          = request.GET.get('q', '').strip()
-    fuel_type  = request.GET.get('fuel', '').strip()
-    body_type  = request.GET.get('body', '').strip()
+    q            = request.GET.get('q', '').strip()
+    fuel_type    = request.GET.get('fuel', '').strip()
+    body_type    = request.GET.get('body', '').strip()
+    min_price    = request.GET.get('min_price', '').strip()
+    max_price    = request.GET.get('max_price', '').strip()
+    transmission = request.GET.get('transmission', '').strip()
 
     vehicles = Vehicle.objects.all()
 
@@ -112,7 +122,8 @@ def allVehiclesView(request):
         vehicles = vehicles.filter(
             Q(brand__icontains=q) |
             Q(model__icontains=q) |
-            Q(variant__icontains=q)
+            Q(variant__icontains=q) |
+            Q(fuel_type__icontains=q)
         )
         # Increment search count for vehicles in results
         vehicles.update(search_count=F('search_count') + 1)
@@ -122,6 +133,17 @@ def allVehiclesView(request):
 
     if body_type:
         vehicles = vehicles.filter(body_type__iexact=body_type)
+
+    if transmission:
+        vehicles = vehicles.filter(transmission__iexact=transmission)
+
+    try:
+        if min_price:
+            vehicles = vehicles.filter(price__gte=Decimal(min_price))
+        if max_price:
+            vehicles = vehicles.filter(price__lte=Decimal(max_price))
+    except Exception:
+        pass
 
     vehicles = vehicles.order_by('-is_featured', 'brand', 'model')
 
@@ -139,7 +161,10 @@ def allVehiclesView(request):
         'body_choices': body_choices,
         'selected_fuel': fuel_type,
         'selected_body': body_type,
+        'selected_transmission': transmission,
         'search_query': q,
+        'min_price': min_price,
+        'max_price': max_price,
         'saved_vehicle_ids': saved_vehicle_ids,
     }
     return render(request, "vehicle/all_vehicles.html", context)
@@ -302,8 +327,8 @@ def compareVehiclesView(request):
 
     # ── Similarity score ───────────────────────────────────────────────────────
     # Categorical matches (each worth 1 point)
-    score_points = 0
-    total_points = 0
+    score_points = 0.0
+    total_points = 0.0
 
     def cat_match(a, b):
         return 1 if str(a).lower() == str(b).lower() else 0
@@ -336,13 +361,13 @@ def compareVehiclesView(request):
         score_points += numeric_closeness(a, b)
         total_points += 1
 
-    similarity_score = round((score_points / total_points) * 100, 2)
+    similarity_score = round(float((score_points / total_points) * 100.0), 2) if total_points > 0.0 else 0.0
 
     # ── Best vehicle score (weighted) ─────────────────────────────────────────
     def vehicle_score(v):
         # Lower price → better (normalised against max possible = 10M)
         price_val = float(v.offer_price if v.offer_price else v.price)
-        price_score = max(0, 1 - price_val / 10_000_000)
+        price_score = max(0.0, 1.0 - price_val / 10_000_000.0)
 
         # Higher mileage → better (EV mileage 0 gets neutral 0.5)
         mil = float(v.mileage)
@@ -520,7 +545,8 @@ def ComparisonStatsView(request):
     avg_similarity = VehicleComparison.objects.filter(
         similarity_score__isnull=False
     ).aggregate(avg=Avg('similarity_score'))['avg']
-    avg_similarity = round(float(avg_similarity), 1) if avg_similarity else 0
+    avg_val = float(avg_similarity) if avg_similarity is not None else 0.0
+    avg_similarity = round(avg_val, 1)
 
     # Most recommended vehicle (best_vehicle field)
     from django.db.models import Count as DCount
@@ -744,7 +770,8 @@ def ApproveAdminView(request, user_id):
 # ─── Static Content Pages ────────────────────────────────────────────────────
 def aboutView(request):
     """Render the About Us page."""
-    return render(request, "about.html")
+    vehicle_count = Vehicle.objects.count()
+    return render(request, "about.html", {'vehicle_count': vehicle_count})
 
 
 def servicesView(request):

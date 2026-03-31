@@ -1,0 +1,9 @@
+{
+  "source_directories": [
+    "r:\\VEHICLE_VAULT\\vehicle_vault"
+  ],
+  "search_path": [
+    "r:\\VEHICLE_VAULT\\venv\\Lib\\site-packages",
+    "r:\\VEHICLE_VAULT\\vehicle_vault"
+  ]
+}

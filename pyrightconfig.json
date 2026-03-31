@@ -1,18 +1,20 @@
 {
-    "venvPath": "r:\\VEHICLE_VAULT",
-    "venv": "venv",
-    "include": [
-        "vehicle_vault"
-    ],
-    "executionEnvironments": [
-        {
-            "root": "vehicle_vault",
-            "extraPaths": [
-                "."
-            ]
-        }
-    ],
-    "reportMissingImports": true,
-    "pythonVersion": "3.13",
-    "typeCheckingMode": "basic"
+  "venvPath": "r:\\VEHICLE_VAULT",
+  "venv": "venv",
+  "pythonVersion": "3.12",
+  "extraPaths": [
+    "r:\\VEHICLE_VAULT\\vehicle_vault"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "r:\\VEHICLE_VAULT\\vehicle_vault",
+      "extraPaths": [
+        "r:\\VEHICLE_VAULT\\vehicle_vault"
+      ]
+    }
+  ],
+  "typeCheckingMode": "basic",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none"
 }
