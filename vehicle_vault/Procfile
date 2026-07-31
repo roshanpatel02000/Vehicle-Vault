@@ -1,1 +1,0 @@
-web: gunicorn vehicle_vault.wsgi:application
