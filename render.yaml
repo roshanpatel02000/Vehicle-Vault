@@ -3,7 +3,7 @@ services:
     name: vehicle-vault
     env: python
     buildCommand: "bash build.sh"
-    startCommand: "gunicorn --chdir vehicle_vault vehicle_vault.wsgi:application"
+    startCommand: "python vehicle_vault/manage.py migrate && gunicorn --chdir vehicle_vault vehicle_vault.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9

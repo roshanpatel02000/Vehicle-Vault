@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'vehicle_vault.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', 'postgresql://postgres:Roshan%401515@localhost:5432/vehicle_vault_db'),
+        default=os.getenv('DATABASE_URL', f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
         conn_max_age=600,
         conn_health_checks=True,
     )
