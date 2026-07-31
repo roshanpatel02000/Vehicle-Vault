@@ -19,7 +19,9 @@ application = get_wsgi_application()
 try:
     print("Running auto-migrations on startup...")
     call_command('migrate', interactive=False)
-    print("Auto-migrations completed successfully.")
+    call_command('seed_data')
+    print("Auto-migrations and data seeding completed successfully.")
 except Exception as e:
     print(f"Auto-migration notice: {e}")
+
 
