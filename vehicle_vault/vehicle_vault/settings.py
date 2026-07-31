@@ -29,6 +29,18 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-v7*-u+gph8^lig41_8h!0w1w#q
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+if '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.extend(['.onrender.com', '127.0.0.1', 'localhost'])
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+WHITENOISE_MANIFEST_STRICT = False
+
 
 
 # Application definition
