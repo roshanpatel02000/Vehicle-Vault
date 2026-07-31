@@ -2,7 +2,7 @@ services:
   - type: web
     name: vehicle-vault
     env: python
-    buildCommand: "./build.sh"
+    buildCommand: "bash build.sh"
     startCommand: "gunicorn --chdir vehicle_vault vehicle_vault.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
