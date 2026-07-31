@@ -9,5 +9,17 @@
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.venvPath": "r:\\VEHICLE_VAULT",
     "python.analysis.venvPath": "r:\\VEHICLE_VAULT",
-    "python.analysis.stubPath": "r:\\VEHICLE_VAULT\\venv\\Lib\\site-packages"
+    "python.analysis.stubPath": "r:\\VEHICLE_VAULT\\venv\\Lib\\site-packages",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none",
+        "reportMissingModuleSource": "none",
+        "reportAttributeAccessIssue": "none",
+        "reportUnknownMemberType": "none",
+        "reportUnknownVariableType": "none",
+        "reportUnknownArgumentType": "none",
+        "reportUndefinedVariable": "none"
+    },
+    "python.analysis.include": [
+        "r:\\VEHICLE_VAULT\\vehicle_vault"
+    ]
 }

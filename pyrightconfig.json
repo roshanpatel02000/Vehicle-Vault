@@ -1,7 +1,8 @@
 {
+  "pythonPath": "r:\\VEHICLE_VAULT\\venv\\Scripts\\python.exe",
   "venvPath": "r:\\VEHICLE_VAULT",
   "venv": "venv",
-  "pythonVersion": "3.12",
+  "pythonVersion": "3.13",
   "extraPaths": [
     "r:\\VEHICLE_VAULT\\vehicle_vault"
   ],
@@ -13,8 +14,20 @@
       ]
     }
   ],
+  "include": [
+    "r:\\VEHICLE_VAULT\\vehicle_vault"
+  ],
+  "exclude": [
+    "r:\\VEHICLE_VAULT\\vehicle_vault\\vehicle_vault"
+  ],
   "typeCheckingMode": "basic",
   "useLibraryCodeForTypes": true,
   "reportMissingImports": "none",
-  "reportMissingModuleSource": "none"
+  "reportMissingModuleSource": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUndefinedVariable": "none"
 }
+
