@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+import os
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v7*-u+gph8^lig41_8h!0w1w#qu)6lro2fx!&)@t5k5_)1kh$$'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-v7*-u+gph8^lig41_8h!0w1w#qu)6lro2fx!&)@t5k5_)1kh$$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,14 +82,11 @@ WSGI_APPLICATION = 'vehicle_vault.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE':'django.db.backends.postgresql',
-        'NAME':'vehicle_vault_db',
-        'USER':'postgres',
-        'PASSWORD':'Roshan@1515',
-        'HOST':'localhost',
-        'PORT':'5432',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL', 'postgresql://postgres:Roshan%401515@localhost:5432/vehicle_vault_db'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -127,6 +128,15 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -142,4 +152,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'rp15102004@gmail.com'
-EMAIL_HOST_PASSWORD = 'mues xowv pboj rgwb' #app password
+EMAIL_HOST_PASSWORD = 'zdib vrde huro xatp' #app password

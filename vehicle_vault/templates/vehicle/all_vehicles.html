@@ -239,14 +239,7 @@
             if (e.key === 'Enter') { clearTimeout(timer); form.submit(); }
 
         });
-
     }
-
-    // Global modal exposure for click handler
-
-    window.openVehicleDetail = null; // We'll define openModal instead below
-
-
 
     // Unified Vehicle Detail Trigger via Delegation
     document.addEventListener('click', function(e) {
@@ -256,7 +249,7 @@
             if (e.target.closest('.vv-save-vehicle-btn')) return;
             
             const btn = card.querySelector('.vv-details-btn');
-            if (btn && typeof openModal === 'function') openModal(btn);
+            if (btn && typeof window.openModal === 'function') window.openModal(btn);
         }
     });
 
@@ -270,173 +263,6 @@
         }
     });
 })();
-
-
-
-// Modal Script Definition
-
-(function(){
-
-    // Setup modal JS logic globally so card clicks can work
-
-    window.openModal = function(btn) {
-
-        const overlay = document.getElementById('vv-modal-overlay');
-
-        const name        = btn.dataset.name;
-
-        const tag         = btn.dataset.tag;
-
-        const image       = btn.dataset.image;
-
-        const engine      = btn.dataset.engine;
-
-        const mileage     = btn.dataset.mileage;
-
-        const seats       = btn.dataset.seats;
-
-        const trans       = btn.dataset.transmission;
-
-        const color       = btn.dataset.color;
-
-        const price       = btn.dataset.price;
-        const offer       = btn.dataset.offer;
-        const discount    = btn.dataset.discount;
-        const safety      = btn.dataset.safety;
-        const desc        = btn.dataset.desc;
-        const tagParts    = tag.split(' · ');
-
-
-
-        document.getElementById('vv-modal-name').textContent = name;
-
-        document.getElementById('vv-modal-tag').textContent  = tag;
-
-        document.getElementById('vv-modal-engine').textContent = engine;
-
-        document.getElementById('vv-modal-mileage').textContent = mileage > 0 ? mileage + ' km/l' : 'Electric';
-
-        document.getElementById('vv-modal-seats').textContent  = seats + ' Seater';
-
-        document.getElementById('vv-modal-trans').textContent  = trans;
-
-        document.getElementById('vv-modal-color').textContent  = color;
-
-        document.getElementById('vv-modal-fuel').textContent   = tagParts[1] || '';
-        document.getElementById('vv-modal-safety').textContent  = safety !== 'N/A' && safety ? safety + ' Stars' : 'N/A';
-
-
-
-        const offerEl  = document.getElementById('vv-modal-offer');
-
-        const origEl   = document.getElementById('vv-modal-orig');
-
-        const saveEl   = document.getElementById('vv-modal-saving');
-
-        if (offer) {
-
-            offerEl.textContent = offer;
-
-            origEl.textContent  = price;
-
-            origEl.style.display = 'inline';
-
-            saveEl.textContent   = discount;
-
-            saveEl.style.display = 'inline';
-
-        } else {
-
-            offerEl.textContent  = price;
-
-            origEl.style.display = 'none';
-
-            saveEl.style.display = 'none';
-
-        }
-
-
-
-        const badge = document.getElementById('vv-modal-discount-badge');
-
-        if (discount) { badge.textContent = discount; badge.style.display = 'block'; }
-
-        else { badge.style.display = 'none'; }
-
-
-
-        const imgEl      = document.getElementById('vv-modal-img-el');
-
-        const placeholder = document.getElementById('vv-modal-img-placeholder');
-
-        if (image) {
-
-            imgEl.src = image; imgEl.style.display = 'block';
-
-            placeholder.style.display = 'none';
-
-        } else {
-
-            imgEl.style.display = 'none';
-
-            placeholder.style.display = 'flex';
-
-        }
-
-
-
-        const descWrap = document.getElementById('vv-modal-desc-wrap');
-
-        const descEl   = document.getElementById('vv-modal-desc');
-
-        if (desc) { descEl.textContent = desc; descWrap.style.display = 'block'; }
-
-        else { descWrap.style.display = 'none'; }
-
-
-
-        overlay.classList.add('active');
-
-        document.body.style.overflow = 'hidden';
-
-    };
-
-
-
-    document.addEventListener("DOMContentLoaded", function() {
-
-        const overlay = document.getElementById('vv-modal-overlay');
-
-        const closeBtn = document.getElementById('vv-modal-close');
-
-
-
-        function closeModal() {
-
-            overlay.classList.remove('active');
-
-            document.body.style.overflow = '';
-
-        }
-
-        
-
-        if (closeBtn && overlay) {
-
-            closeBtn.addEventListener('click', closeModal);
-
-            overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-
-            document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-        }
-
-    });
-
-
-
-})();
-
 
 
 

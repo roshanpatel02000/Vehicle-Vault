@@ -29,7 +29,11 @@ def send_otp_email(user, purpose):
         f"This code is valid for 2 minutes. Do not share it with anyone.\n\n"
         f"— Vehicle Vault Team"
     )
-    send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+    try:
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+    except Exception as e:
+        print(f"\n[DEBUG] Email failed to send: {e}")
+        print(f"[DEBUG] OTP Code for {user.email} ({purpose}): {code}\n")
     return code
 
 
@@ -213,7 +217,7 @@ def verifyOtpView(request):
                     messages.success(request, 'OTP verified! Please set your new password.')
                     return redirect('reset_password')
 
-            except OTPCode.DoesNotExist:
+            except (OTPCode.DoesNotExist, User.DoesNotExist):
                 messages.error(request, 'Invalid OTP. Please try again.')
                 return render(request, 'core/verify_otp.html', {'form': form, 'email': email, 'purpose': purpose})
     else:
@@ -234,7 +238,7 @@ def resendOtpView(request):
         send_otp_email(user, purpose)
         messages.success(request, f'A new OTP has been sent to {email}.')
     except User.DoesNotExist:
-        messages.error(request, 'User not found.')
+        messages.success(request, f'A new OTP has been sent to {email}.')
     return redirect('verify_otp')
 
 
@@ -255,8 +259,10 @@ def forgotPasswordView(request):
                 return redirect('verify_otp')
             except User.DoesNotExist:
                 # Don't reveal if email exists or not (security)
+                request.session['otp_email'] = email
+                request.session['otp_purpose'] = 'reset'
                 messages.info(request, f'If an account with {email} exists, an OTP has been sent.')
-                return redirect('forgot_password')
+                return redirect('verify_otp')
     else:
         email_prefill = request.GET.get('email', '')
         form = ForgotPasswordForm(initial={'email': email_prefill})
